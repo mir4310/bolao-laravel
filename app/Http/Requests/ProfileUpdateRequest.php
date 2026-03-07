@@ -27,6 +27,7 @@ class ProfileUpdateRequest extends FormRequest
             ],
             'telefone' => ['nullable', 'string', 'max:20'], // Permitindo telefone
             'quem_indicou' => ['nullable', 'string', 'max:255'], // Permitindo alterar a indicação
+            'avatar' => ['nullable', 'string']
         ];
     }
 }

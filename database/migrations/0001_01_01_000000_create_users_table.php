@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('telefone')->nullable();
             $table->string('quem_indicou')->nullable();
             $table->enum('role', ['usuario', 'administrador'])->default('usuario');
+            $table->text('avatar')->nullable();
             
             $table->decimal('valor', 10, 2)->nullable();
             $table->date('data_pagamento')->nullable(); 

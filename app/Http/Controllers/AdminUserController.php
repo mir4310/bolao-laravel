@@ -9,9 +9,37 @@ use Illuminate\Validation\Rules;
 
 class AdminUserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::orderBy('name')->paginate(20);
+        $query = User::query();
+
+        // 1️⃣ Busca por nome ou email
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->query('search').'%')
+                  ->orWhere('email', 'like', '%'.$request->query('search').'%');
+            });
+        }
+
+        // 2️⃣ Ordenação
+        $sort = $request->query('sort', 'name');           // usando query()
+        $direction = $request->query('direction', 'asc');  // usando query()
+
+        if (in_array($sort, ['name', 'created_at', 'data_pagamento'])) {
+            $query->orderBy($sort, $direction);
+        }
+
+        // 3️⃣ Quantidade de registros por página
+        $allowedPerPage = [10, 25, 50, 100];
+        $perPage = (int) $request->query('perPage', 25);
+        if (!in_array($perPage, $allowedPerPage)) {
+            $perPage = 25;
+        }
+
+        // 4️⃣ Paginação
+        $users = $query->paginate($perPage)->withQueryString();
+
+        // 5️⃣ Retorna view
         return view('admin.users.index', compact('users'));
     }
 
@@ -48,13 +76,13 @@ class AdminUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'data_pagamento' => ['nullable', 'date'],
+            'data_pagamento' => ['nullable', 'date']
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'data_pagamento' => $request->data_pagamento,
+            'data_pagamento' => $request->data_pagamento
         ];
 
         if ($request->filled('password')) {

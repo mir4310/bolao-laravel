@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminGameController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\PalpiteController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\SiteController;

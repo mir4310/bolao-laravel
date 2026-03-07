@@ -91,48 +91,49 @@ class AdminGameController extends Controller
         $game->update($data);
 
         // Rotina para ajustar os pontos de todos os palpites da referida partida
-        $objPalpites = Palpite::where('game_id', $game->id)->get();
+        // Checa se o jogo já foi iniciado. Só recalcula se o jogo estiver iniciado
+        if ($game->status >= 1) {
+            $objPalpites = Palpite::where('game_id', $game->id)->get();
 
-        foreach ($objPalpites as $palpite) {
-            $totalPontos = 0;
+            foreach ($objPalpites as $palpite) {
+                $totalPontos = 0;
 
-            $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
-            echo ("Home Team Gol : {$game->home_team_goals}<br>");
-            echo ("Away Team Gol : {$game->away_team_goals}<br>");
-            echo ("Palpite Home  : {$palpite->home_team_goals}<br>");
-            echo ("Palpite Away  : {$palpite->away_team_goals}<br>");
+                $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
+                //echo ("Home Team Gol : {$game->home_team_goals}<br>");
+                //echo ("Away Team Gol : {$game->away_team_goals}<br>");
+                //echo ("Palpite Home  : {$palpite->home_team_goals}<br>");
+                //echo ("Palpite Away  : {$palpite->away_team_goals}<br>");
 
-
-            $nTotGolsPartida = $game->home_team_goals + $game->away_team_goals;
-            $nTotGolsPalpite = $palpite->home_team_goals + $palpite->away_team_goals;
-            if (!$erroPalpite) {
-                if ($palpite->home_team_goals == $game->home_team_goals && $palpite->away_team_goals == $game->away_team_goals) {
-                    //Placar Exato
-                    $totalPontos = 6;
-                } else {
-                    //Acertou Empate ou o vencedor
-                    if ($palpite->home_team_goals == $palpite->away_team_goals && $game->home_team_goals == $game->away_team_goals) {
-                        $totalPontos = 3;
+                $nTotGolsPartida = $game->home_team_goals + $game->away_team_goals;
+                $nTotGolsPalpite = $palpite->home_team_goals + $palpite->away_team_goals;
+                if (!$erroPalpite) {
+                    if ($palpite->home_team_goals == $game->home_team_goals && $palpite->away_team_goals == $game->away_team_goals) {
+                        //Placar Exato
+                        $totalPontos = 6;
                     } else {
-                        if ($palpite->home_team_goals > $palpite->away_team_goals && $game->home_team_goals > $game->away_team_goals) {
+                        //Acertou Empate ou o vencedor
+                        if ($palpite->home_team_goals == $palpite->away_team_goals && $game->home_team_goals == $game->away_team_goals) {
                             $totalPontos = 3;
-                        } else
-                        if ($palpite->home_team_goals < $palpite->away_team_goals && $game->home_team_goals < $game->away_team_goals) {
-                            $totalPontos = 3;
+                        } else {
+                            if ($palpite->home_team_goals > $palpite->away_team_goals && $game->home_team_goals > $game->away_team_goals) {
+                                $totalPontos = 3;
+                            } else
+                            if ($palpite->home_team_goals < $palpite->away_team_goals && $game->home_team_goals < $game->away_team_goals) {
+                                $totalPontos = 3;
+                            }
+                        }
+                        //Atribui pontos de bonificação
+                        if ($nTotGolsPalpite == $nTotGolsPartida) {
+                            $totalPontos = $totalPontos + 1;
+                        } elseif ($palpite->home_team_goals == $game->home_team_goals || $palpite->away_team_goals == $game->away_team_goals) {
+                            $totalPontos = $totalPontos + 1;
                         }
                     }
-                    //Atribui pontos de bonificação
-                    if ($nTotGolsPalpite == $nTotGolsPartida) {
-                        $totalPontos = $totalPontos + 1;
-                    } elseif ($palpite->home_team_goals == $game->home_team_goals || $palpite->away_team_goals == $game->away_team_goals) {
-                        $totalPontos = $totalPontos + 1;
-                    }
                 }
+                $palpite->pontos = $totalPontos;
+                $palpite->save();
             }
-            $palpite->pontos = $totalPontos;
-            $palpite->save();
         }
-
         //return redirect()->route('admin.games.index')->with('success', 'Jogo atualizado com sucesso!');
         return redirect()->route('admin.games.edit', $game->id)->with('success', 'Jogo atualizado com sucesso!');
     }

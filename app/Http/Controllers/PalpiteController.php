@@ -15,9 +15,9 @@ class PalpiteController extends Controller
         // Carrega os times e o palpite do usuário logado (se existir)
         $games = Game::with(['homeTeam', 'awayTeam', 'userPalpite'])
             ->orderBy('fase')
-            ->orderBy('group')
             ->orderBy('date')
             ->orderBy('hour')
+            ->orderBy('group')
             ->get();
 
         return view('dashboard', compact('games'));

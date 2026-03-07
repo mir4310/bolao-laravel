@@ -87,34 +87,36 @@
                                     <td colspan="3" class="px-4 py-4">
                                         <div class="flex flex-col gap-1">
 
-                                            <span class="font-semibold text-gray-800 break-words">
-                                                {{ $palpites->user->name }}
+                                            <span class="font-semibold text-gray-600 text-lg break-words">
+                                                <div class="flex items-center justify-center gap-3">
+                                                    <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                                    <span>{{ $palpites->user->name }}</span>
+                                                </div>
                                             </span>
 
-                                            <span class="text-gray-600">
+                                            <span class="text-gray-600 text-lg text-center">
                                                 <span class="font-medium">Palpite:</span>
                                                 @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
                                                 Não palpitou
                                                 @else
                                                 {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                                 @endif
+                                                <span style="margin-left: 15px;" class="inline-flex items-center justify-center min-w-[40px] text-center px-2 py-1 text-xs font-semibold rounded-full bg-green-200">{{ $palpites->pontos }}</span>
                                             </span>
-
-                                            <span class="text-gray-700 font-medium">
-                                                Pontos: {{ $palpites->pontos }}
-                                            </span>
-
                                         </div>
                                     </td>
                                 </tr>
 
                                 <!-- 💻 DESKTOP (Tabela Normal) -->
-                                <tr class="hidden sm:table-row">
-                                    <td class="px-6 py-3 text-gray-600 break-words">
-                                        {{ $palpites->user->name }}
+                                <tr class="hidden sm:table-row hover:bg-gray-100">
+                                    <td class="px-6 py-3 break-words">
+                                        <div class="flex items-center gap-3 text-gray-600 text-lg">
+                                            <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                            <span>{{ $palpites->user->name }}</span>
+                                        </div>
                                     </td>
 
-                                    <td class="px-6 py-3 text-center font-medium text-gray-900">
+                                    <td class="px-6 py-3 text-center font-medium text-gray-600 text-base">
                                         @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
                                         Não palpitou
                                         @else
@@ -122,7 +124,7 @@
                                         @endif
                                     </td>
 
-                                    <td class="px-6 py-3 text-center font-semibold text-gray-700">
+                                    <td class="px-6 py-3 text-center font-semibold text-gray-600 text-base">
                                         {{ $palpites->pontos }}
                                     </td>
                                 </tr>
@@ -161,7 +163,7 @@
                                 </tr>
                                 <tr>
                                     <th scope="col" class="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider">
-                                        {{ __('Posição') }}
+                                        {{ __('#') }}
                                     </th>
                                     <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('Nome') }}
@@ -173,28 +175,38 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @php
-                                    $posicao = 0;
-                                    $ultimaPontuacao = 0;
+                                $posicao = 0;
+                                $ultimaPontuacao = 0;
                                 @endphp
 
                                 @forelse($ranking as $index => $user)
 
                                 @if($user->palpites_sum_pontos != $ultimaPontuacao)
-                                    @php
-                                    $posicao = $index+1;
-                                    $ultimaPontuacao = $user->palpites_sum_pontos;
-                                    @endphp
+                                @php
+                                $posicao = $index+1;
+                                $ultimaPontuacao = $user->palpites_sum_pontos;
+                                @endphp
                                 @endif
-                                
 
-                                <tr @class(['bg-green-100'=> $posicao==1, 'bg-sky-100'=> $posicao==2, 'bg-yellow-100'=> $posicao==3 ] )>
-                                    <td  @class(['px-2 py-2 whitespace-nowrap text-sm text-center font-medium text-gray-900'])>
+
+                                <tr @class(['bg-green-100'=> $posicao==1, 'bg-sky-100'=> $posicao==2, 'bg-yellow-100'=> $posicao==3, 'hover:bg-green-200'=> $posicao==1, 'hover:bg-sky-200'=> $posicao==2, 'hover:bg-yellow-200'=> $posicao==3 ] )>
+                                    <td @class(['px-2 py-2 whitespace-nowrap text-sm md:text-base text-center font-medium text-gray-900 min-w-[5ch] sm:min-w-[10ch] lg:min-w-[15ch]'])>
                                         {{ $posicao }}º
                                     </td>
-                                    <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500">
-                                        {{ $user->name }}
+                                    <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500 w-full max-w-[1px]">
+                                        <div class="flex items-center gap-3 min-w-0 truncate">
+                                            <img class="w-8 h-8 md:w-10 md:h-10 rounded-full shadow-md bg-white flex-shrink-0"
+                                                src="{{ $user->avatar }}"
+                                                onerror="this.onerror=null;this.src='/img/no-avatar.png';"
+                                                title="{{ $user->name }}"
+                                                alt="{{ $user->name }}">
+
+                                            <span class="text-gray-800 text-sm md:text-base ">
+                                                {{ $user->name }}
+                                            </span>
+                                        </div>
                                     </td>
-                                    <td class="px-2 py-2 whitespace-nowrap text-sm text-center font-medium text-gray-700">
+                                    <td class="px-2 py-2 whitespace-nowrap text-sm md:text-base text-center font-medium text-gray-700 min-w-[5ch] sm:min-w-[15ch] lg:min-w-[30ch]">
                                         {{ $user->palpites_sum_pontos ?? 0 }}
                                     </td>
                                 </tr>
