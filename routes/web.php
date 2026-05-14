@@ -13,8 +13,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/jogos-apostas/{id}', [SiteController::class, 'jogoApostas']);
 
-    
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [PalpiteController::class, 'index'])->name('dashboard');
     Route::post('/palpites', [PalpiteController::class, 'store'])->name('palpites.store');
@@ -40,8 +41,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/games/{game}', [AdminGameController::class, 'destroy'])->name('admin.games.destroy');
 
     Route::resource('admin/users', AdminUserController::class)->names('admin.users');
-    
+
     // Outras rotas de admin aqui...
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

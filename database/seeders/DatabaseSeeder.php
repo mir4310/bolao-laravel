@@ -61,6 +61,19 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'heliokushima@gmail.com'], // Evita duplicar se rodar o seeder de novo
+            [
+                'name' => 'Hélio Kushima',
+                'telefone' => '(14) 99686-2481',
+                'quem_indicou' => 'Junior',
+                'password' => '$2y$12$UgJReENp0e2CfpHvm3OlbOOwvQUsp7A02/vtkcdU.fv.zBHRLh.0C',
+                'email_verified_at' => now(),
+                'role' => 'usuario',
+                'avatar' => 'https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortWaved&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=ShirtCrewNeck&clotheColor=Black&eyeType=Happy&eyebrowType=AngryNatural&mouthType=Sad&skinColor=Light'
+            ]
+        );
+
         // 2. Criar 200 usuários de teste
         /*
         $faker = \Faker\Factory::create('pt_BR');
