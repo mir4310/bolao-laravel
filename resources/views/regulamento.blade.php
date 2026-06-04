@@ -16,7 +16,7 @@
                     <p><b>1.2.</b> Cada participante poderá concorrer com apenas 1 aposta.</p>
                     <p><b>1.3.</b> As inscrições e apostas não se encerrarão. Quem entrar no meio da competição participará apenas dos jogos restantes.</p>
                     <p><b>1.4.</b> As apostas ficam visíveis imediatamente, mas só participam as autorizadas pelos organizadores.</p>
-                    <p><b>1.5.</b> As apostas podem ser modificadas até 1 hora antes do início da partida. 15 minutos antes do jogo, um e-mail será enviado a todos os participantes com os palpites.</p>
+                    <p><b>1.5.</b> As apostas podem ser modificadas até 1 hora antes do início da partida. Durante as partidas, as apostas de todos poderão ser acompanhadas pelo painel do site.</p>
                     <p><b>1.6.</b> Para se cadastrar, o usuário deve informar: Nome completo, Indicação, E-mail e Telefone.</p>
                     <p><b>1.7.</b> O valor de cada aposta é de <b class="text-green-600">R$ {{ number_format(($valorBolao ?? 30), 2, ',', '.') }}</b>.</p>
                 </section>
@@ -95,6 +95,7 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">Chute de Ouro</h3>
 
                     <p>Cada acerto no chute de ouro rende <b class="text-yellow-600">30 pontos extras</b>. Pode ser apostado até o início da fase de oitavas de final.</p>
+                    <p>Os palpites do chute de ouro poderão ser registrados a partir do início da 2ª rodada da fase de grupos.</p>
                 </section>
 
                 <section>
