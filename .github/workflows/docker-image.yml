@@ -16,6 +16,6 @@ jobs:
     - name: Criando a Imagem
       run: docker build -t bolao .
     - name: Tag na imagem
-      run: docker tag api ghcr.io/mir4310/bolao-laravel/bolao:${{github.run_number}}
+      run: docker tag bolao ghcr.io/mir4310/bolao-laravel/bolao:${{github.run_number}}
     - name: Publicando a imagem no Docker
       run: docker push ghcr.io/mir4310/bolao-laravel/bolao:${{github.run_number}}
