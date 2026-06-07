@@ -1,0 +1,20 @@
+name: Build
+on: 
+  push:
+    branches: [ "workflow_dispatch" ]
+  pull_request:
+    branches: [ "workflow_dispatch" ]
+jobs:
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Login Github
+      run: docker login ghcr.io --username arthurbentivenha --password=${{ secrets.REGISTRY }}
+    - name: Criando a Imagem
+      run: docker build -t bolao .
+    - name: Tag na imagem
+      run: docker tag api ghcr.io/mir4310/bolao-laravel/bolao:${{github.run_number}}
+    - name: Publicando a imagem no Docker
+      run: docker push ghcr.io/mir4310/bolao-laravel/bolao:${{github.run_number}}
