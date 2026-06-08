@@ -11,10 +11,10 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # Estágio 2: Node (Vite Build)
-FROM node:20-alpine AS frontend
-WORKDIR /app
-COPY . . 
-RUN npm install && npm run build
+# FROM node:20-alpine AS frontend
+# WORKDIR /app
+# COPY . . 
+# RUN npm install && npm run build
 
 # Estágio 3: Imagem Final 
 FROM php:8.4-apache
@@ -37,6 +37,18 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Ativa o Opcache e aplica as configurações otimizadas para o Laravel
+RUN docker-php-ext-enable opcache \
+    && { \
+        echo 'opcache.enable=1'; \
+        echo 'opcache.memory_consumption=128'; \
+        echo 'opcache.interned_strings_buffer=8'; \
+        echo 'opcache.max_accelerated_files=10000'; \
+        echo 'opcache.revalidate_freq=0'; \
+        echo 'opcache.validate_timestamps=1'; \
+        echo 'opcache.fast_shutdown=1'; \
+    } > /usr/local/etc/php/conf.d/opcache-laravel.ini
     
 WORKDIR /var/www/html
 
