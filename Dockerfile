@@ -52,6 +52,7 @@ RUN { \
     echo 'opcache.interned_strings_buffer=16'; \
     echo 'opcache.max_accelerated_files=20000'; \
     echo 'opcache.validate_timestamps=0'; \
+    echo 'max_execution_time=60'; \
 } > /usr/local/etc/php/conf.d/opcache.ini
     
 WORKDIR /var/www/html
