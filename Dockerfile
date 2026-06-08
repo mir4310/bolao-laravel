@@ -21,6 +21,9 @@ FROM php:8.4-apache
 
 # Instala dependências nativas no Debian
 RUN apt-get update && apt-get install -y \
+    npm \
+    nodejs \
+    nano \
     git \
     curl \
     libpng-dev \
@@ -34,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-
+    
 WORKDIR /var/www/html
 
 # Copia os arquivos da sua aplicação
@@ -43,10 +46,12 @@ COPY . .
 # 👉 NOVIDADE: Copia a pasta vendor já com o autoload gerado do Estágio 1
 COPY --from=vendor /app/vendor/ ./vendor/
 
+# Executa o VITE
+RUN npm install && npm run build
 # Copia os assets compilados do Vite do Estágio 2
 # Remove qualquer resquício de pasta build local trazida pelo comando acima
-RUN rm -rf public/build
-COPY --from=frontend /app/public/build/ ./public/build/
+# RUN rm -rf public/build
+# COPY --from=frontend /app/public/build/ ./public/build/
 
 # Como não precisamos mais rodar o composer aqui, apenas ajustamos as permissões!
 RUN chown -R www-data:www-data /var/www/html \
@@ -55,12 +60,11 @@ RUN chown -R www-data:www-data /var/www/html \
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-# 1. Ativa o mod_rewrite do Apache
 # 2. Atualiza a raiz do site (DocumentRoot) em todas as configurações
 # 3. Altera AllowOverride para All para ler o seu arquivo .htaccess
 # 4. Injeta as diretivas HTTPS de forma segura e limpa dentro do bloco <VirtualHost>
-RUN a2enmod rewrite \
-    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+RUN a2enmod rewrite
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf /etc/apache2/sites-available/*.conf \
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
     
