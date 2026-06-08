@@ -19,6 +19,7 @@
                     <p><b>1.5.</b> As apostas podem ser modificadas até 1 hora antes do início da partida. Durante as partidas, as apostas de todos poderão ser acompanhadas pelo painel do site.</p>
                     <p><b>1.6.</b> Para se cadastrar, o usuário deve informar: Nome completo, Indicação, E-mail e Telefone.</p>
                     <p><b>1.7.</b> O valor de cada aposta é de <b class="text-green-600">R$ {{ number_format(($valorBolao ?? 30), 2, ',', '.') }}</b>.</p>
+                    <p><b>1.8.</b> O pagamento deverá ser feito via PIX com a seguinte chave: <b class="text-blue-600">(14) 99658-1771 - Cledemir Barduco Junior - NuBank</b>.</p>
                 </section>
 
                 <section>
