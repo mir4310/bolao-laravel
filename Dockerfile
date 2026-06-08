@@ -81,8 +81,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
 
 # Força o desligamento do Opcache no ambiente
-RUN echo "opcache.enable=0" > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-    && echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
+#RUN echo "opcache.enable=0" > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
+#    && echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
 
 
 # Limpa os caches internos do Laravel antes de iniciar o Apache
