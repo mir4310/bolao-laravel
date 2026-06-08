@@ -64,7 +64,9 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Executa o VITE
-RUN rm -rf public/build && npm install && npm run build
+RUN rm -rf public/build 
+RUN npm install
+RUN npm run build
 # Copia os assets compilados do Vite do Estágio 2
 # Remove qualquer resquício de pasta build local trazida pelo comando acima
 # RUN rm -rf public/build
