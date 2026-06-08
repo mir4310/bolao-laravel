@@ -26,70 +26,127 @@
                     @php
                         $faseNomes = [
                             1 => 'Fase de Grupos',
-                            2 => 'Oitavas de Final',
-                            3 => 'Quartas de Final',
-                            4 => 'Semifinal',
-                            5 => 'Final',
+                            2 => '1/16 Avos de Final',
+                            3 => 'Oitavas de Final',
+                            4 => 'Quartas de Final',
+                            5 => 'Semifinal',
+                            6 => 'Final',
                         ];
                         $fases  = $games->pluck('fase')->filter()->unique()->sort()->values();
                         $grupos = $games->pluck('group')->filter()->unique()->sort()->values();
                     @endphp
 
-                    {{-- Filtro por Fase --}}
-                    @if($fases->isNotEmpty())
+                    {{-- Botão Toggle de Filtros --}}
                     <div class="mb-4">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Fase</p>
-                        <div class="flex flex-wrap gap-2" id="fase-filter-buttons">
-                            <button type="button"
-                                data-fase="all"
-                                class="fase-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
-                                       bg-emerald-600 text-white shadow-sm transition-all duration-200
-                                       hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                                Todas as Fases
-                            </button>
-                            @foreach($fases as $fase)
-                            <button type="button"
-                                data-fase="{{ $fase }}"
-                                class="fase-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
-                                       bg-white text-gray-600 shadow-sm transition-all duration-200
-                                       hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700
-                                       focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                                {{ $faseNomes[$fase] ?? 'Fase '.$fase }}
-                            </button>
-                            @endforeach
-                        </div>
+                        <button type="button" id="filters-toggle"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300
+                                   bg-white text-gray-700 font-semibold text-sm shadow-sm
+                                   hover:bg-gray-50 hover:border-gray-400 transition-all duration-200
+                                   focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                            <svg id="filters-chevron" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                            </svg>
+                            Filtros
+                            <span id="active-filters-badge"
+                                class="hidden ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-indigo-600 text-white leading-none">
+                                0
+                            </span>
+                        </button>
                     </div>
-                    @endif
 
-                    {{-- Filtro por Grupo --}}
-                    @if($grupos->isNotEmpty())
-                    <div class="mb-5" id="group-filter-wrapper">
-                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Grupo</p>
-                        <div class="flex flex-wrap gap-2" id="group-filter-buttons">
-                            <button type="button"
-                                data-filter="all"
-                                class="group-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
-                                       bg-indigo-600 text-white shadow-sm transition-all duration-200
-                                       hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                                Todos
-                            </button>
-                            @foreach($grupos as $grupo)
-                            <button type="button"
-                                data-filter="{{ $grupo }}"
-                                class="group-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
-                                       bg-white text-gray-600 shadow-sm transition-all duration-200
-                                       hover:bg-indigo-50 hover:border-indigo-400 hover:text-indigo-700
-                                       focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                                Grupo {{ $grupo }}
-                            </button>
-                            @endforeach
+                    {{-- Painel Colapsável --}}
+                    <div id="filters-panel"
+                         style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; opacity: 0;">
+                        <div class="pb-4 border-b border-gray-100 mb-5">
+
+                            {{-- Filtro por Data --}}
+                            <div class="mb-4">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Data</p>
+                                <div class="flex flex-wrap gap-2" id="date-filter-buttons">
+                                    <button type="button" data-date="all"
+                                        class="date-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
+                                               bg-amber-500 text-white shadow-sm transition-all duration-200
+                                               hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                        📅 Todas as Datas
+                                    </button>
+                                    <button type="button" data-date="today_tomorrow"
+                                        class="date-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                               bg-white text-gray-600 shadow-sm transition-all duration-200
+                                               hover:bg-amber-50 hover:border-amber-400 hover:text-amber-700
+                                               focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                        🕐 Hoje e Amanhã
+                                    </button>
+                                    <button type="button" data-date="week"
+                                        class="date-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                               bg-white text-gray-600 shadow-sm transition-all duration-200
+                                               hover:bg-amber-50 hover:border-amber-400 hover:text-amber-700
+                                               focus:outline-none focus:ring-2 focus:ring-amber-400">
+                                        📆 Próximos 7 Dias
+                                    </button>
+                                </div>
+                            </div>
+
+                            {{-- Filtro por Fase --}}
+                            @if($fases->isNotEmpty())
+                            <div class="mb-4">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Fase</p>
+                                <div class="flex flex-wrap gap-2" id="fase-filter-buttons">
+                                    <button type="button"
+                                        data-fase="all"
+                                        class="fase-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
+                                               bg-emerald-600 text-white shadow-sm transition-all duration-200
+                                               hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                        Todas as Fases
+                                    </button>
+                                    @foreach($fases as $fase)
+                                    <button type="button"
+                                        data-fase="{{ $fase }}"
+                                        class="fase-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                               bg-white text-gray-600 shadow-sm transition-all duration-200
+                                               hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700
+                                               focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                        {{ $faseNomes[$fase] ?? 'Fase '.$fase }}
+                                    </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                            @endif
+
+                            {{-- Filtro por Grupo --}}
+                            @if($grupos->isNotEmpty())
+                            <div id="group-filter-wrapper">
+                                <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Grupo</p>
+                                <div class="flex flex-wrap gap-2" id="group-filter-buttons">
+                                    <button type="button"
+                                        data-filter="all"
+                                        class="group-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
+                                               bg-indigo-600 text-white shadow-sm transition-all duration-200
+                                               hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                        Todos
+                                    </button>
+                                    @foreach($grupos as $grupo)
+                                    <button type="button"
+                                        data-filter="{{ $grupo }}"
+                                        class="group-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                               bg-white text-gray-600 shadow-sm transition-all duration-200
+                                               hover:bg-indigo-50 hover:border-indigo-400 hover:text-indigo-700
+                                               focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                        Grupo {{ $grupo }}
+                                    </button>
+                                    @endforeach
+                                </div>
+                                <p id="group-filter-label" class="mt-2 text-xs text-gray-400 hidden">
+                                    Exibindo: <span id="group-filter-label-text" class="font-semibold text-indigo-600"></span>
+                                    &mdash; <button type="button" id="group-filter-clear" class="underline text-gray-400 hover:text-gray-600">ver todos</button>
+                                </p>
+                            </div>
+                            @endif
+
                         </div>
-                        <p id="group-filter-label" class="mt-2 text-xs text-gray-400 hidden">
-                            Exibindo: <span id="group-filter-label-text" class="font-semibold text-indigo-600"></span>
-                            &mdash; <button type="button" id="group-filter-clear" class="underline text-gray-400 hover:text-gray-600">ver todos</button>
-                        </p>
                     </div>
-                    @endif
                     {{-- ===== FIM FILTROS ===== --}}
 
                     <form id="palpites-form" action="{{ route('palpites.store') }}" method="POST">
@@ -104,7 +161,7 @@
                             $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
 
                             @endphp
-                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" style="padding: 10px;" @class(['border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
+                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px;" @class(['border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
 
                                 <div class="text-center text-s text-gray-500 mb-2">
                                     <span class="font-bold block text-gray-700">
@@ -334,19 +391,60 @@
             });
         }
 
+        // ===== TOGGLE DO PAINEL DE FILTROS =====
+        (function () {
+            const toggle  = document.getElementById('filters-toggle');
+            const panel   = document.getElementById('filters-panel');
+            const chevron = document.getElementById('filters-chevron');
+            let isOpen = false;
+
+            toggle && toggle.addEventListener('click', () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    panel.style.maxHeight = panel.scrollHeight + 300 + 'px'; // +300 para espaço extra
+                    panel.style.opacity  = '1';
+                    chevron.style.transform = 'rotate(180deg)';
+                    toggle.classList.add('border-indigo-400', 'text-indigo-700');
+                    toggle.classList.remove('border-gray-300', 'text-gray-700');
+                } else {
+                    panel.style.maxHeight = '0';
+                    panel.style.opacity   = '0';
+                    chevron.style.transform = 'rotate(0deg)';
+                    toggle.classList.remove('border-indigo-400', 'text-indigo-700');
+                    toggle.classList.add('border-gray-300', 'text-gray-700');
+                }
+            });
+        })();
+        // ===== FIM TOGGLE =====
+
         // ===== FILTROS: FASE + GRUPO =====
         (function () {
             // Estado ativo
-            const state = { fase: 'all', group: 'all' };
+            const state = { fase: 'all', group: 'all', date: 'all' };
+
+            const badge   = document.getElementById('active-filters-badge');
+            const panel   = document.getElementById('filters-panel');
 
             const faseNomes = {
                 '1': 'Fase de Grupos',
-                '2': 'Oitavas de Final',
-                '3': 'Quartas de Final',
-                '4': 'Semifinal',
-                '5': 'Final',
+                '2': '1/16 Avos de Final',
+                '3': 'Oitavas de Final',
+                '4': 'Quartas de Final',
+                '5': 'Semifinal',
+                '6': 'Final',
             };
 
+            // Helpers de data (comparação em YYYY-MM-DD sem horas)
+            function todayStr() {
+                return new Date().toISOString().slice(0, 10);
+            }
+            function offsetDateStr(days) {
+                const d = new Date();
+                d.setDate(d.getDate() + days);
+                return d.toISOString().slice(0, 10);
+            }
+
+            const dateBtns      = document.querySelectorAll('.date-filter-btn');
             const faseBtns      = document.querySelectorAll('.fase-filter-btn');
             const groupBtns     = document.querySelectorAll('.group-filter-btn');
             const cards         = document.querySelectorAll('[data-game-id][data-fase]');
@@ -355,12 +453,57 @@
             const groupLabelTxt = document.getElementById('group-filter-label-text');
             const groupClearBtn = document.getElementById('group-filter-clear');
 
-            // Aplica visibilidade dos cards com base em AMBOS os filtros
+            // Verifica se uma data de jogo (YYYY-MM-DD) passa no filtro de data ativo
+            function matchesDateFilter(cardDate) {
+                if (state.date === 'all') return true;
+                const today    = todayStr();
+                const tomorrow = offsetDateStr(1);
+                const weekEnd  = offsetDateStr(7);
+                if (state.date === 'today_tomorrow') {
+                    return cardDate === today || cardDate === tomorrow;
+                }
+                if (state.date === 'week') {
+                    return cardDate >= today && cardDate <= weekEnd;
+                }
+                return true;
+            }
+
+            // Atualiza badge com o número de filtros ativos (diferentes do padrão)
+            function updateBadge() {
+                let count = 0;
+                if (state.date  !== 'all') count++;
+                if (state.fase  !== 'all') count++;
+                if (state.group !== 'all') count++;
+                if (badge) {
+                    badge.textContent = count;
+                    badge.classList.toggle('hidden', count === 0);
+                }
+                // Garante que o painel tem altura suficiente se estiver aberto
+                if (panel && panel.style.maxHeight !== '0px' && panel.style.maxHeight !== '') {
+                    panel.style.maxHeight = panel.scrollHeight + 300 + 'px';
+                }
+            }
+
+            // Aplica visibilidade dos cards com base em TODOS os filtros
             function renderCards() {
                 cards.forEach(card => {
                     const matchFase  = state.fase  === 'all' || card.dataset.fase  === state.fase;
                     const matchGroup = state.group === 'all' || card.dataset.group === state.group;
-                    card.style.display = (matchFase && matchGroup) ? '' : 'none';
+                    const matchDate  = matchesDateFilter(card.dataset.date);
+                    card.style.display = (matchFase && matchGroup && matchDate) ? '' : 'none';
+                });
+            }
+
+            // Estilo ativo/inativo para botões de DATA (âmbar)
+            function updateDateBtnStyles() {
+                dateBtns.forEach(btn => {
+                    const isActive = btn.dataset.date === state.date;
+                    btn.classList.toggle('bg-amber-500',      isActive);
+                    btn.classList.toggle('text-white',        isActive);
+                    btn.classList.toggle('border-transparent',isActive);
+                    btn.classList.toggle('bg-white',         !isActive);
+                    btn.classList.toggle('text-gray-600',    !isActive);
+                    btn.classList.toggle('border-gray-300',  !isActive);
                 });
             }
 
@@ -414,6 +557,7 @@
                     updateFaseBtnStyles();
                     updateGroupBtnStyles();
                     renderCards();
+                    updateBadge();
                 });
             });
 
@@ -423,6 +567,7 @@
                     state.group = btn.dataset.filter;
                     updateGroupBtnStyles();
                     renderCards();
+                    updateBadge();
                 });
             });
 
@@ -431,6 +576,17 @@
                 state.group = 'all';
                 updateGroupBtnStyles();
                 renderCards();
+                updateBadge();
+            });
+
+            // Ao selecionar uma DATA
+            dateBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.date = btn.dataset.date;
+                    updateDateBtnStyles();
+                    renderCards();
+                    updateBadge();
+                });
             });
         })();
         // ===== FIM FILTROS =====
