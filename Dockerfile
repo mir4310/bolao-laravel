@@ -13,10 +13,10 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # ========================== STAGE 2 ===========================
 # Estágio 2: Node (Vite Build)
-FROM node:20-alpine AS frontend
-WORKDIR /app
-COPY . . 
-RUN npm install && npm run build
+#FROM node:20-alpine AS frontend
+#WORKDIR /app
+#COPY . . 
+#RUN npm install && npm run build
 
 # ========================== STAGE 3 ===========================
 # Estágio 3: Imagem Final 
@@ -24,6 +24,8 @@ FROM php:8.4-apache
 
 # Instala dependências nativas no Debian
 RUN apt-get update && apt-get install -y \
+    npm \
+    nodejs \
     nano \
     git \
     curl \
@@ -60,11 +62,11 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Executa o VITE
-#RUN npm install && npm run build
+RUN npm install && npm run build
 # Copia os assets compilados do Vite do Estágio 2
 # Remove qualquer resquício de pasta build local trazida pelo comando acima
- RUN rm -rf public/build
- COPY --from=frontend /app/public/ ./public/
+# RUN rm -rf public/build
+# COPY --from=frontend /app/public/ ./public/
 
 # Como não precisamos mais rodar o composer aqui, apenas ajustamos as permissões!
 RUN chown -R www-data:www-data /var/www/html \
