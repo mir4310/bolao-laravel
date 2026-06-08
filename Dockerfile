@@ -63,7 +63,7 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 # 2. Atualiza a raiz do site (DocumentRoot) em todas as configurações
 # 3. Altera AllowOverride para All para ler o seu arquivo .htaccess
 # 4. Injeta as diretivas HTTPS de forma segura e limpa dentro do bloco <VirtualHost>
-RUN a2enmod rewrite
+RUN a2enmod rewrite headers
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf /etc/apache2/sites-available/*.conf \
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
