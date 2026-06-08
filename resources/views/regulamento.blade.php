@@ -20,6 +20,7 @@
                     <p><b>1.6.</b> Para se cadastrar, o usuário deve informar: Nome completo, Indicação, E-mail e Telefone.</p>
                     <p><b>1.7.</b> O valor de cada aposta é de <b class="text-green-600">R$ {{ number_format(($valorBolao ?? 30), 2, ',', '.') }}</b>.</p>
                     <p><b>1.8.</b> O pagamento deverá ser feito via PIX com a seguinte chave: <b class="text-blue-600">(14) 99658-1771 - Cledemir Barduco Junior - NuBank</b>.</p>
+                    <p><b>1.9.</b> Os pagamentos deverão ser realizados até o término da 1ª rodada da fase de grupos. Palpites não pagos serão EXCLUÍDOS!</p>
                 </section>
 
                 <section>

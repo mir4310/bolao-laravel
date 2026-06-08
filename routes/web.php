@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChuteDeOuroController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminGameController;
 use App\Http\Controllers\AdminUserController;
@@ -19,6 +20,7 @@ Route::get('/jogos-apostas/{id}', [SiteController::class, 'jogoApostas']);
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [PalpiteController::class, 'index'])->name('dashboard');
     Route::post('/palpites', [PalpiteController::class, 'store'])->name('palpites.store');
+    Route::post('/chute-de-ouro', [ChuteDeOuroController::class, 'store'])->name('chute-de-ouro.store');
 });
 
 Route::middleware('auth')->group(function () {

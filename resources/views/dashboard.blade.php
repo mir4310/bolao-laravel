@@ -36,8 +36,8 @@
                         $grupos = $games->pluck('group')->filter()->unique()->sort()->values();
                     @endphp
 
-                    {{-- Botão Toggle de Filtros --}}
-                    <div class="mb-4">
+                    {{-- Botões: Filtros + Chute de Ouro --}}
+                    <div class="mb-4 flex flex-wrap items-center gap-3">
                         <button type="button" id="filters-toggle"
                             class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300
                                    bg-white text-gray-700 font-semibold text-sm shadow-sm
@@ -54,6 +54,21 @@
                                 class="hidden ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-indigo-600 text-white leading-none">
                                 0
                             </span>
+                        </button>
+
+                        {{-- Botão Chute de Ouro --}}
+                        <button type="button" id="chute-ouro-toggle"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-yellow-400
+                                   bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-semibold text-sm shadow-sm
+                                   hover:from-yellow-500 hover:to-amber-600 transition-all duration-200
+                                   focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                            <svg id="chute-ouro-chevron" class="w-4 h-4 text-white transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                            ⭐ Chute de Ouro
+                            @if($chuteDeOuro && ($chuteDeOuro->chute01 || $chuteDeOuro->chute02 || $chuteDeOuro->chute03))
+                            <span class="ml-1 w-2 h-2 rounded-full bg-white inline-block"></span>
+                            @endif
                         </button>
                     </div>
 
@@ -148,6 +163,122 @@
                         </div>
                     </div>
                     {{-- ===== FIM FILTROS ===== --}}
+
+                    {{-- ===== PAINEL CHUTE DE OURO ===== --}}
+                    <div id="chute-ouro-panel"
+                         style="max-height: 0; overflow: hidden; transition: max-height 0.35s ease, opacity 0.25s ease; opacity: 0;">
+
+                        <div class="mb-5 p-4 md:p-6 rounded-xl border-2 border-yellow-300 bg-gradient-to-br from-yellow-50 to-amber-50 shadow-md">
+
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="text-2xl">⭐</span>
+                                <div>
+                                    <h3 class="text-base font-bold text-amber-800">Chute de Ouro</h3>
+                                    <p class="text-xs text-amber-600">Suas apostas especiais valem pontos bônus!</p>
+                                </div>
+                            </div>
+
+                            <form id="chute-ouro-form" action="{{ route('chute-de-ouro.store') }}" method="POST">
+                                @csrf
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                                    {{-- Chute 01: Campeã --}}
+                                    <div class="flex flex-col gap-1">
+                                        <label for="chute01" class="text-xs font-bold text-amber-800 uppercase tracking-wide flex items-center gap-1">
+                                            🏆 Seleção Campeã
+                                        </label>
+                                        <p class="text-xs text-amber-600 mb-1">Que seleção será campeã?</p>
+                                        <div class="relative">
+                                            <select id="chute01" name="chute01"
+                                                class="w-full appearance-none pl-3 pr-8 py-2.5 rounded-lg border border-yellow-300 bg-white text-sm font-semibold text-gray-800
+                                                       shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition">
+                                                <option value="">Escolha uma seleção...</option>
+                                                @foreach($teams as $team)
+                                                <option value="{{ $team->id }}"
+                                                    {{ old('chute01', $chuteDeOuro?->chute01) == $team->id ? 'selected' : '' }}>
+                                                    {{ $team->name }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                            </div>
+                                        </div>
+                                        {{-- Bandeira do selecionado --}}
+                                        <div id="flag-chute01" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
+                                    </div>
+
+                                    {{-- Chute 02: Vice-campeã --}}
+                                    <div class="flex flex-col gap-1">
+                                        <label for="chute02" class="text-xs font-bold text-amber-800 uppercase tracking-wide flex items-center gap-1">
+                                            🥈 Seleção Vice-campeã
+                                        </label>
+                                        <p class="text-xs text-amber-600 mb-1">Que seleção será vice-campeã?</p>
+                                        <div class="relative">
+                                            <select id="chute02" name="chute02"
+                                                class="w-full appearance-none pl-3 pr-8 py-2.5 rounded-lg border border-yellow-300 bg-white text-sm font-semibold text-gray-800
+                                                       shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition">
+                                                <option value="">Escolha uma seleção...</option>
+                                                @foreach($teams as $team)
+                                                <option value="{{ $team->id }}"
+                                                    {{ old('chute02', $chuteDeOuro?->chute02) == $team->id ? 'selected' : '' }}>
+                                                    {{ $team->name }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                            </div>
+                                        </div>
+                                        {{-- Bandeira do selecionado --}}
+                                        <div id="flag-chute02" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
+                                    </div>
+
+                                    {{-- Chute 03: Artilheiro --}}
+                                    <div class="flex flex-col gap-1">
+                                        <label for="chute03" class="text-xs font-bold text-amber-800 uppercase tracking-wide flex items-center gap-1">
+                                            ⚽ Artilheiro da Copa
+                                        </label>
+                                        <p class="text-xs text-amber-600 mb-1">De qual seleção será o artilheiro?</p>
+                                        <div class="relative">
+                                            <select id="chute03" name="chute03"
+                                                class="w-full appearance-none pl-3 pr-8 py-2.5 rounded-lg border border-yellow-300 bg-white text-sm font-semibold text-gray-800
+                                                       shadow-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition">
+                                                <option value="">Escolha uma seleção...</option>
+                                                @foreach($teams as $team)
+                                                <option value="{{ $team->id }}"
+                                                    {{ old('chute03', $chuteDeOuro?->chute03) == $team->id ? 'selected' : '' }}>
+                                                    {{ $team->name }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                            <div class="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                                            </div>
+                                        </div>
+                                        {{-- Bandeira do selecionado --}}
+                                        <div id="flag-chute03" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="mt-4 flex justify-end">
+                                    <button type="submit" id="chute-ouro-submit"
+                                        class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-bold text-sm text-white
+                                               bg-gradient-to-r from-yellow-500 to-amber-600
+                                               shadow-md hover:from-yellow-600 hover:to-amber-700
+                                               transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                        Salvar Chute de Ouro
+                                    </button>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                    {{-- ===== FIM CHUTE DE OURO ===== --}}
 
                     <form id="palpites-form" action="{{ route('palpites.store') }}" method="POST">
                         @csrf
@@ -416,6 +547,114 @@
             });
         })();
         // ===== FIM TOGGLE =====
+
+        // ===== TOGGLE DO PAINEL CHUTE DE OURO =====
+        (function () {
+            const toggleBtn = document.getElementById('chute-ouro-toggle');
+            const panel     = document.getElementById('chute-ouro-panel');
+            const chevron   = document.getElementById('chute-ouro-chevron');
+            let isOpen = false;
+
+            toggleBtn && toggleBtn.addEventListener('click', () => {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    panel.style.maxHeight = panel.scrollHeight + 250 + 'px';
+                    panel.style.opacity   = '1';
+                    chevron.style.transform = 'rotate(180deg)';
+                } else {
+                    panel.style.maxHeight = '0';
+                    panel.style.opacity   = '0';
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Dados de seleções vindos do PHP para exibir bandeiras
+            const teamsData = @json($teams->map(fn($t) => ['id' => $t->id, 'name' => $t->name, 'slug' => $t->slug]));
+
+            function getTeamFlag(teamId) {
+                const team = teamsData.find(t => String(t.id) === String(teamId));
+                if (!team || !team.slug) return null;
+                return {
+                    url: `https://flagcdn.com/w160/${team.slug.toLowerCase()}.png`,
+                    name: team.name
+                };
+            }
+
+            function updateFlag(selectId, flagDivId) {
+                const select  = document.getElementById(selectId);
+                const flagDiv = document.getElementById(flagDivId);
+                if (!select || !flagDiv) return;
+
+                select.addEventListener('change', () => renderFlag(select.value, flagDiv));
+                // Renderiza estado inicial (chute já salvo)
+                if (select.value) renderFlag(select.value, flagDiv);
+            }
+
+            function renderFlag(teamId, flagDiv) {
+                flagDiv.innerHTML = '';
+                if (!teamId) return;
+                const team = getTeamFlag(teamId);
+                if (!team) return;
+                flagDiv.innerHTML = `
+                    <img src="${team.url}" alt="${team.name}"
+                         class="h-5 w-8 object-cover rounded shadow-sm border border-yellow-200"
+                         onerror="this.style.display='none'">
+                    <span class="text-xs font-semibold text-amber-700">${team.name}</span>
+                `;
+            }
+
+            updateFlag('chute01', 'flag-chute01');
+            updateFlag('chute02', 'flag-chute02');
+            updateFlag('chute03', 'flag-chute03');
+
+            // Ajusta altura do painel se estiver aberto quando a bandeira muda
+            document.querySelectorAll('#chute01,#chute02,#chute03').forEach(sel => {
+                sel.addEventListener('change', () => {
+                    if (isOpen) panel.style.maxHeight = panel.scrollHeight + 200 + 'px';
+                });
+            });
+        })();
+        // ===== FIM TOGGLE CHUTE DE OURO =====
+
+        // ===== AJAX CHUTE DE OURO =====
+        (function () {
+            const form   = document.getElementById('chute-ouro-form');
+            const btn    = document.getElementById('chute-ouro-submit');
+            if (!form || !btn) return;
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const original = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = 'Salvando...';
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value,
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(r => r.json().then(data => ({ status: r.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status === 200 && body.success) {
+                        showToast(body.success, 'success');
+                    } else {
+                        const msg = body.errors
+                            ? Object.values(body.errors)[0][0]
+                            : (body.message || 'Erro ao salvar.');
+                        showToast(msg, 'error');
+                    }
+                })
+                .catch(() => showToast('Falha ao salvar. Verifique sua conexão.', 'error'))
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = original;
+                });
+            });
+        })();
+        // ===== FIM AJAX CHUTE DE OURO =====
 
         // ===== FILTROS: FASE + GRUPO =====
         (function () {

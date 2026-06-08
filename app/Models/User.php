@@ -68,4 +68,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Palpite::class);
     }
+
+    /**
+     * Relacionamento: Um usuário tem um palpite de chute de ouro.
+     */
+    public function chuteDeOuro()
+    {
+        return $this->hasOne(\App\Models\ChuteDeOuro::class);
+    }
 }

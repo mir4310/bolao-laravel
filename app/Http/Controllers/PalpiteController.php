@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ChuteDeOuro;
 use App\Models\Game;
 use App\Models\Palpite;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,7 +22,13 @@ class PalpiteController extends Controller
             ->orderBy('group')
             ->get();
 
-        return view('dashboard', compact('games'));
+        // Seleções disponíveis para o Chute de Ouro
+        $teams = Team::orderBy('name')->get();
+
+        // Chute de Ouro do usuário logado (se já tiver registrado)
+        $chuteDeOuro = ChuteDeOuro::where('user_id', Auth::id())->first();
+
+        return view('dashboard', compact('games', 'teams', 'chuteDeOuro'));
     }
 
     public function store(Request $request)
