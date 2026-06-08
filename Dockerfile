@@ -64,7 +64,7 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Executa o VITE
-RUN npm install && npm run build
+RUN rm -rf public/build && npm install && npm run build
 # Copia os assets compilados do Vite do Estágio 2
 # Remove qualquer resquício de pasta build local trazida pelo comando acima
 # RUN rm -rf public/build
@@ -80,7 +80,7 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 # 2. Atualiza a raiz do site (DocumentRoot) em todas as configurações
 # 3. Altera AllowOverride para All para ler o seu arquivo .htaccess
 # 4. Injeta as diretivas HTTPS de forma segura e limpa dentro do bloco <VirtualHost>
-RUN a2enmod rewrite headers
+RUN a2enmod rewrite
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf /etc/apache2/sites-available/*.conf \
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
