@@ -24,8 +24,6 @@ FROM php:8.4-apache
 
 # Instala dependências nativas no Debian
 RUN apt-get update && apt-get install -y \
-    npm \
-    nodejs \
     nano \
     git \
     curl \
