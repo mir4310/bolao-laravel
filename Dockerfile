@@ -1,3 +1,4 @@
+# ========================== STAGE 1 ===========================
 # Estágio 1: Composer
 FROM composer:2.7 AS vendor
 WORKDIR /app
@@ -10,12 +11,14 @@ COPY . .
 # Gera o autoloader otimizado aqui mesmo (ignorando scripts que precisariam do banco de dados/extensões)
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
+# ========================== STAGE 2 ===========================
 # Estágio 2: Node (Vite Build)
- FROM node:20-alpine AS frontend
- WORKDIR /app
- COPY . . 
- RUN npm install && npm run build
+FROM node:20-alpine AS frontend
+WORKDIR /app
+COPY . . 
+RUN npm install && npm run build
 
+# ========================== STAGE 3 ===========================
 # Estágio 3: Imagem Final 
 FROM php:8.4-apache
 
