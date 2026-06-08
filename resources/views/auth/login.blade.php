@@ -44,4 +44,23 @@
             </x-primary-button>
         </div>
     </form>
+
+    {{-- Registro --}}
+    @if (Route::has('register'))
+        <div class="mt-6">
+            <div class="relative flex items-center">
+                <div class="flex-grow border-t border-gray-200"></div>
+                <span class="mx-3 text-xs text-gray-400 flex-shrink">Ainda não tem conta?</span>
+                <div class="flex-grow border-t border-gray-200"></div>
+            </div>
+
+            <a href="{{ route('register') }}"
+               class="mt-4 flex items-center justify-center w-full gap-2 px-4 py-2.5 rounded-md
+                      border-2 border-emerald-600 text-emerald-700 font-semibold text-sm
+                      hover:bg-emerald-600 hover:text-white transition-all duration-200
+                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500">
+                🏆 Registre-se para jogar!
+            </a>
+        </div>
+    @endif
 </x-guest-layout>

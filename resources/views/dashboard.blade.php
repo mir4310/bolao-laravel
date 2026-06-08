@@ -22,6 +22,76 @@
                     </div>
                     @endif
 
+                    {{-- ===== FILTROS ===== --}}
+                    @php
+                        $faseNomes = [
+                            1 => 'Fase de Grupos',
+                            2 => 'Oitavas de Final',
+                            3 => 'Quartas de Final',
+                            4 => 'Semifinal',
+                            5 => 'Final',
+                        ];
+                        $fases  = $games->pluck('fase')->filter()->unique()->sort()->values();
+                        $grupos = $games->pluck('group')->filter()->unique()->sort()->values();
+                    @endphp
+
+                    {{-- Filtro por Fase --}}
+                    @if($fases->isNotEmpty())
+                    <div class="mb-4">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Fase</p>
+                        <div class="flex flex-wrap gap-2" id="fase-filter-buttons">
+                            <button type="button"
+                                data-fase="all"
+                                class="fase-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
+                                       bg-emerald-600 text-white shadow-sm transition-all duration-200
+                                       hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                Todas as Fases
+                            </button>
+                            @foreach($fases as $fase)
+                            <button type="button"
+                                data-fase="{{ $fase }}"
+                                class="fase-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                       bg-white text-gray-600 shadow-sm transition-all duration-200
+                                       hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700
+                                       focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                {{ $faseNomes[$fase] ?? 'Fase '.$fase }}
+                            </button>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Filtro por Grupo --}}
+                    @if($grupos->isNotEmpty())
+                    <div class="mb-5" id="group-filter-wrapper">
+                        <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Filtrar por Grupo</p>
+                        <div class="flex flex-wrap gap-2" id="group-filter-buttons">
+                            <button type="button"
+                                data-filter="all"
+                                class="group-filter-btn active px-3 py-1.5 rounded-full text-sm font-semibold border border-transparent
+                                       bg-indigo-600 text-white shadow-sm transition-all duration-200
+                                       hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                Todos
+                            </button>
+                            @foreach($grupos as $grupo)
+                            <button type="button"
+                                data-filter="{{ $grupo }}"
+                                class="group-filter-btn px-3 py-1.5 rounded-full text-sm font-semibold border border-gray-300
+                                       bg-white text-gray-600 shadow-sm transition-all duration-200
+                                       hover:bg-indigo-50 hover:border-indigo-400 hover:text-indigo-700
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                Grupo {{ $grupo }}
+                            </button>
+                            @endforeach
+                        </div>
+                        <p id="group-filter-label" class="mt-2 text-xs text-gray-400 hidden">
+                            Exibindo: <span id="group-filter-label-text" class="font-semibold text-indigo-600"></span>
+                            &mdash; <button type="button" id="group-filter-clear" class="underline text-gray-400 hover:text-gray-600">ver todos</button>
+                        </p>
+                    </div>
+                    @endif
+                    {{-- ===== FIM FILTROS ===== --}}
+
                     <form id="palpites-form" action="{{ route('palpites.store') }}" method="POST">
                         @csrf
 
@@ -34,7 +104,7 @@
                             $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
 
                             @endphp
-                            <div data-game-id="{{ $game->id }}" style="padding: 10px;" @class(['border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
+                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" style="padding: 10px;" @class(['border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
 
                                 <div class="text-center text-s text-gray-500 mb-2">
                                     <span class="font-bold block text-gray-700">
@@ -263,5 +333,106 @@
                 }
             });
         }
+
+        // ===== FILTROS: FASE + GRUPO =====
+        (function () {
+            // Estado ativo
+            const state = { fase: 'all', group: 'all' };
+
+            const faseNomes = {
+                '1': 'Fase de Grupos',
+                '2': 'Oitavas de Final',
+                '3': 'Quartas de Final',
+                '4': 'Semifinal',
+                '5': 'Final',
+            };
+
+            const faseBtns      = document.querySelectorAll('.fase-filter-btn');
+            const groupBtns     = document.querySelectorAll('.group-filter-btn');
+            const cards         = document.querySelectorAll('[data-game-id][data-fase]');
+            const groupWrapper  = document.getElementById('group-filter-wrapper');
+            const groupLabel    = document.getElementById('group-filter-label');
+            const groupLabelTxt = document.getElementById('group-filter-label-text');
+            const groupClearBtn = document.getElementById('group-filter-clear');
+
+            // Aplica visibilidade dos cards com base em AMBOS os filtros
+            function renderCards() {
+                cards.forEach(card => {
+                    const matchFase  = state.fase  === 'all' || card.dataset.fase  === state.fase;
+                    const matchGroup = state.group === 'all' || card.dataset.group === state.group;
+                    card.style.display = (matchFase && matchGroup) ? '' : 'none';
+                });
+            }
+
+            // Estilo ativo/inativo para botões de FASE (verde esmeralda)
+            function updateFaseBtnStyles() {
+                faseBtns.forEach(btn => {
+                    const isActive = btn.dataset.fase === state.fase;
+                    btn.classList.toggle('bg-emerald-600',    isActive);
+                    btn.classList.toggle('text-white',        isActive);
+                    btn.classList.toggle('border-transparent',isActive);
+                    btn.classList.toggle('bg-white',         !isActive);
+                    btn.classList.toggle('text-gray-600',    !isActive);
+                    btn.classList.toggle('border-gray-300',  !isActive);
+                });
+            }
+
+            // Estilo ativo/inativo para botões de GRUPO (índigo)
+            function updateGroupBtnStyles() {
+                groupBtns.forEach(btn => {
+                    const isActive = btn.dataset.filter === state.group;
+                    btn.classList.toggle('bg-indigo-600',    isActive);
+                    btn.classList.toggle('text-white',       isActive);
+                    btn.classList.toggle('border-transparent',isActive);
+                    btn.classList.toggle('bg-white',        !isActive);
+                    btn.classList.toggle('text-gray-600',   !isActive);
+                    btn.classList.toggle('border-gray-300', !isActive);
+                });
+
+                if (state.group === 'all') {
+                    groupLabel && groupLabel.classList.add('hidden');
+                } else {
+                    if (groupLabel && groupLabelTxt) {
+                        groupLabelTxt.textContent = 'Grupo ' + state.group;
+                        groupLabel.classList.remove('hidden');
+                    }
+                }
+            }
+
+            // Ao selecionar uma FASE
+            faseBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.fase  = btn.dataset.fase;
+                    state.group = 'all'; // reseta grupo ao trocar fase
+
+                    // Oculta filtro de grupo em fases eliminatórias (fase != 1 e != all)
+                    if (groupWrapper) {
+                        const showGroup = state.fase === 'all' || state.fase === '1';
+                        groupWrapper.style.display = showGroup ? '' : 'none';
+                    }
+
+                    updateFaseBtnStyles();
+                    updateGroupBtnStyles();
+                    renderCards();
+                });
+            });
+
+            // Ao selecionar um GRUPO
+            groupBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.group = btn.dataset.filter;
+                    updateGroupBtnStyles();
+                    renderCards();
+                });
+            });
+
+            // "Ver todos" no label do grupo
+            groupClearBtn && groupClearBtn.addEventListener('click', () => {
+                state.group = 'all';
+                updateGroupBtnStyles();
+                renderCards();
+            });
+        })();
+        // ===== FIM FILTROS =====
     </script>
 </x-app-layout>
