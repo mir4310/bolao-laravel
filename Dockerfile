@@ -11,10 +11,10 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # Estágio 2: Node (Vite Build)
-# FROM node:20-alpine AS frontend
-# WORKDIR /app
-# COPY . . 
-# RUN npm install && npm run build
+ FROM node:20-alpine AS frontend
+ WORKDIR /app
+ COPY . . 
+ RUN npm install && npm run build
 
 # Estágio 3: Imagem Final 
 FROM php:8.4-apache
@@ -59,11 +59,11 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Executa o VITE
-RUN npm install && npm run build
+#RUN npm install && npm run build
 # Copia os assets compilados do Vite do Estágio 2
 # Remove qualquer resquício de pasta build local trazida pelo comando acima
-# RUN rm -rf public/build
-# COPY --from=frontend /app/public/build/ ./public/build/
+ RUN rm -rf public/build
+ COPY --from=frontend /app/public/ ./public/
 
 # Como não precisamos mais rodar o composer aqui, apenas ajustamos as permissões!
 RUN chown -R www-data:www-data /var/www/html \
@@ -79,12 +79,7 @@ RUN a2enmod rewrite headers
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
     && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf /etc/apache2/sites-available/*.conf \
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
-
-# Força o desligamento do Opcache no ambiente
-#RUN echo "opcache.enable=0" > /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini \
-#    && echo "opcache.enable_cli=0" >> /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini
-
-
+    
 # Limpa os caches internos do Laravel antes de iniciar o Apache
 CMD php artisan config:clear && php artisan view:clear
 
