@@ -13,11 +13,8 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts
 # Estágio 2: Node (Vite Build)
 FROM node:20-alpine AS frontend
 WORKDIR /app
-COPY package.json package-lock.json vite.config.js ./
-RUN npm install
-COPY resources/ ./resources/
-COPY public/ ./public/
-RUN npm run build
+COPY . . 
+RUN npm install && npm run build
 
 # Estágio 3: Imagem Final 
 FROM php:8.4-apache
@@ -47,6 +44,8 @@ COPY . .
 COPY --from=vendor /app/vendor/ ./vendor/
 
 # Copia os assets compilados do Vite do Estágio 2
+# Remove qualquer resquício de pasta build local trazida pelo comando acima
+RUN rm -rf public/build
 COPY --from=frontend /app/public/build/ ./public/build/
 
 # Como não precisamos mais rodar o composer aqui, apenas ajustamos as permissões!
@@ -55,8 +54,15 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
-    && printf '\nSetEnv HTTPS On\nPassEnv HTTPS\n' >> /etc/apache2/apache2.conf
+
+# 1. Ativa o mod_rewrite do Apache
+# 2. Atualiza a raiz do site (DocumentRoot) em todas as configurações
+# 3. Altera AllowOverride para All para ler o seu arquivo .htaccess
+# 4. Injeta as diretivas HTTPS de forma segura e limpa dentro do bloco <VirtualHost>
+RUN a2enmod rewrite \
+    && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
+    && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf /etc/apache2/sites-available/*.conf \
+    && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
     
 EXPOSE 80
 
