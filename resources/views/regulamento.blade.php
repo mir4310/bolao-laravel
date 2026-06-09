@@ -27,10 +27,11 @@
                     <h3 class="text-xl font-bold text-gray-900 mb-2">2. Instruções para Aposta</h3>
 
                     <p><b>2.1.</b> Após se cadastrar, o participante terá acesso ao quadro de jogos e deverá preencher seus palpites.</p>
-                    <p><b>2.2.</b> O usuário poderá selecionar resultados da fase de grupos com data, hora, local, seleções e campos de escolha.</p>
+                    <p><b>2.2.</b> O usuário poderá selecionar resultados de todas as fases com data, hora, local, seleções e campos de escolha.</p>
                     <p><b>2.3.</b> O número de gols será escolhido a partir de valores pré-definidos.</p>
-                    <p><b>2.4.</b> Após selecionar os resultados, deverá clicar em <b>Gravar Aposta</b>.</p>
+                    <p><b>2.4.</b> Após selecionar os resultados, deverá clicar em <b>Salvar Palpites</b>.</p>
                     <p><b>2.5.</b> Após salvar, poderá alterar até 1 hora antes do início do jogo.</p>
+                    <p><b>2.6.</b> As fases seguintes só serão liberadas após a definição dos confrontos e tabela.</p>
                 </section>
 
                 <section>
