@@ -20,7 +20,7 @@ RUN composer dump-autoload --optimize --no-dev --no-scripts
 
 # ========================== STAGE 3 ===========================
 # Estágio 3: Imagem Final 
-FROM php:8.4-apache
+FROM php:8.5-apache
 
 # Instala dependências nativas no Debian
 RUN apt-get update && apt-get install -y \
