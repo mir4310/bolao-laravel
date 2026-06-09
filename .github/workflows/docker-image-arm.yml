@@ -1,0 +1,25 @@
+name: Build arm
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "workflow_dispatch" ]
+  pull_request:
+    branches: [ "workflow_dispatch" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-24.04-arm
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Criar imagem
+      run: docker build . --file Dockerfile --tag bolao:${{github.run_number}}
+    - name: Login Github
+      run: docker login ghcr.io --username arthurbentivenha --password=${{ secrets.REGISTRY }}
+    - name: Tag na imagem
+      run: docker tag bolao ghcr.io/arthurbentivenha/bolao-arm:${{github.run_number}}
+    - name: Publicando a imagem no Docker 
+      run: docker push ghcr.io/arthurbentivenha/bolao-arm:${{github.run_number}}
