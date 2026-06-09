@@ -11,6 +11,22 @@
         <span id="ajax-status-text"></span>
     </div>
 
+    {{-- ===== FAIXA DE PAGAMENTO PENDENTE ===== --}}
+    @if(is_null(auth()->user()->data_pagamento))
+    <div class="w-full bg-red-600 text-white px-4 py-3 flex items-start md:items-center gap-3 shadow-md" role="alert">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5 md:mt-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <p class="text-sm font-semibold leading-snug">
+            ⚠️ <span class="font-bold">Pagamento pendente:</span>
+            Faça o PIX para confirmar a participação.
+            <span class="font-mono tracking-wide">(14)99658-1771</span> — Cledemir Barduco Junior — NuBank.
+            <span class="font-semibold">Os pagamentos deverão ser realizados até o término da 1ª rodada da fase de grupos.</span>
+        </p>
+    </div>
+    @endif
+    {{-- ===== FIM FAIXA DE PAGAMENTO ===== --}}
+
     <div class="py-6 md:py-12">
         <div style="padding-bottom:10px" class="max-w-7xl mx-auto md:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm md:rounded-lg">

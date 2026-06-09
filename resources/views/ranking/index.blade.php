@@ -204,6 +204,15 @@
                                             <span class="text-gray-800 text-sm md:text-base ">
                                                 {{ $user->name }}
                                             </span>
+                                            @if(is_null($user->data_pagamento))
+                                            <span title="Pagamento pendente" class="inline-flex items-center" alt="Pagamento pendente">⚠️</span>
+                                            @else
+                                            <span title="Pagamento confirmado" class="inline-flex items-center text-green-500" alt="Pagamento confirmado">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                                </svg>
+                                            </span>
+                                            @endif
                                         </div>
                                     </td>
                                     <td class="px-2 py-2 whitespace-nowrap text-sm md:text-base text-center font-medium text-gray-700 min-w-[5ch] sm:min-w-[15ch] lg:min-w-[30ch]">
@@ -218,6 +227,31 @@
                                 </tr>
                                 @endforelse
                             </tbody>
+                            <tfoot class="bg-gray-50 border-t-2 border-gray-200">
+                                <tr>
+                                    <td colspan="3" class="px-4 py-3">
+                                        @php
+                                            $total     = $ranking->count();
+                                            $pagos     = $ranking->whereNotNull('data_pagamento')->count();
+                                            $pendentes = $ranking->whereNull('data_pagamento')->count();
+                                        @endphp
+                                        <div class="flex flex-wrap items-center gap-3 text-xs font-semibold text-gray-500">
+                                            <span>
+                                                Total de participantes:
+                                                <span class="text-gray-800 font-bold">{{ $total }}</span>
+                                            </span>
+                                            <span class="text-gray-300">|</span>
+                                            <span class="inline-flex items-center gap-1 text-green-600">
+                                                Confirmados: <span class="font-bold">{{ $pagos }}</span>
+                                            </span>
+                                            <span class="text-gray-300">|</span>
+                                            <span class="inline-flex items-center gap-1 text-amber-600">
+                                                Pendentes: <span class="font-bold">{{ $pendentes }}</span>
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
