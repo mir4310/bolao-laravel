@@ -20,6 +20,6 @@ jobs:
     - name: Login Github
       run: docker login ghcr.io --username arthurbentivenha --password=${{ secrets.REGISTRY }}
     - name: Tag na imagem
-      run: docker tag bolao ghcr.io/arthurbentivenha/bolao-arm:${{github.run_number}}
+      run: docker tag bolao:${{github.run_number}} ghcr.io/arthurbentivenha/bolao-arm:${{github.run_number}}
     - name: Publicando a imagem no Docker 
       run: docker push ghcr.io/arthurbentivenha/bolao-arm:${{github.run_number}}
