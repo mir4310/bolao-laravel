@@ -11,6 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // 👇 Confia nos headers do Traefik (X-Forwarded-Proto, X-Forwarded-For etc.)
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
         ]);
