@@ -13,15 +13,14 @@
 
     {{-- ===== FAIXA DE PAGAMENTO PENDENTE ===== --}}
     @if(is_null(auth()->user()->data_pagamento))
-    <div class="w-full bg-red-600 text-white px-4 py-3 flex items-start md:items-center gap-3 shadow-md" role="alert">
+    <div class="w-full bg-red-600 text-white px-4 py-3 flex items-start md:items-center gap-3 shadow-md" role="alert" style="justify-content: center;">
         <svg class="w-5 h-5 flex-shrink-0 mt-0.5 md:mt-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
         </svg>
         <p class="text-sm font-semibold leading-snug">
-            ⚠️ <span class="font-bold">Pagamento pendente:</span>
-            Faça o PIX para confirmar a participação.
-            <span class="font-mono tracking-wide">(14)99658-1771</span> — Cledemir Barduco Junior — NuBank.
-            <span class="font-semibold">Os pagamentos deverão ser realizados até o término da 1ª rodada da fase de grupos.</span>
+            <span>Pagamento pendente: Faça o PIX de <b>R$ 30,00</b> para confirmar a participação. Os pagamentos deverão ser realizados até o término da 1ª rodada da fase de grupos.</span><br>
+            <span class="font-semibold tracking-wide">(14)99658-1771 — Cledemir Barduco Junior — NuBank.</span> 
+            
         </p>
     </div>
     @endif
@@ -310,7 +309,32 @@
                             @endphp
                             <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px;" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
 
-                                <div class="text-center text-sm text-gray-500 mb-2">
+                                <span class="absolute top-2 left-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border
+                                    @if($game->status == 0)
+                                        bg-blue-50 text-blue-700 border-blue-200
+                                    @elseif($game->status == 1)
+                                        bg-amber-50 text-amber-700 border-amber-200 animate-pulse
+                                    @else
+                                        bg-gray-100 text-gray-600 border-gray-200
+                                    @endif">
+                                    <span class="h-2 w-2 rounded-full
+                                        @if($game->status == 0)
+                                            bg-blue-500
+                                        @elseif($game->status == 1)
+                                            bg-amber-500
+                                        @else
+                                            bg-gray-400
+                                        @endif"></span>
+                                    @if($game->status == 0)
+                                        Agendada
+                                    @elseif($game->status == 1)
+                                        Em Andamento
+                                    @else
+                                        Encerrada
+                                    @endif
+                                </span>
+
+                                <div class="text-center text-sm text-gray-500 mb-2 pt-6 md:pt-4">
                                     <span class="font-bold block text-gray-700 text-base">
                                         Fase: {{ ucfirst(str_replace('_', ' ', $game->fase)) }} - Grupo: {{ $game->group }}
                                     </span>
