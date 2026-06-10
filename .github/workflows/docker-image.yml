@@ -14,7 +14,7 @@ jobs:
     - name: Login Github
       run: docker login ghcr.io --username arthurbentivenha --password=${{ secrets.REGISTRY }}
     - name: Criando a Imagem
-      run: docker build -t bolao .
+      run: docker build -t bolao . --build-arg BUILD_NUMBER=${{github.run_number}} --build-arg BUILD_DATE="$(date +'%d/%m/%Y %H:%M:%S')"
     - name: Tag na imagem
       run: docker tag bolao ghcr.io/arthurbentivenha/bolao:${{github.run_number}}
     - name: Publicando a imagem no Docker 

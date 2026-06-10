@@ -21,6 +21,7 @@ FROM php:8.5-fpm
 # 1. Dependências do sistema
 # ---------------------------------------------------------------
 RUN apt-get update && apt-get install -y \
+    netcat-openbsd \
     nginx \
     npm \
     nodejs \
