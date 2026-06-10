@@ -27,7 +27,7 @@
     {{-- ===== FIM FAIXA DE PAGAMENTO ===== --}}
 
     <div class="py-6 md:py-12">
-        <div style="padding-bottom:10px" class="max-w-7xl mx-auto md:px-6 lg:px-8">
+        <div style="padding-bottom:10px;" class="max-w-7xl mx-auto md:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm md:rounded-lg">
                 <div class="p-4 md:p-6 text-gray-900">
 
@@ -427,29 +427,25 @@
                             @endforelse
                         </div>
 
-                        <!--div class="bg-green-200 md:bg-green-100 fixed bottom-0 left-0 right-0 bg-gray-100 border-t border-gray-300 shadow-lg p-4 z-50"-->
-                        <div class="max-w-7xl mx-auto flex justify-center" style="
-                                    position: fixed;
-                                    right: 15px;
-                                    bottom: 12px;">
+                        <div class="fixed bottom-3 left-1/2 -translate-x-1/2 w-full max-w-[90rem] px-4 md:px-6 lg:px-8 pointer-events-none z-50 flex justify-end">
                             <button type="submit"
+                                class="pointer-events-auto"
                                 style="
-                                            background:#3e7738;
-                                            color:#fff;
-                                            padding:20px 30px;
-                                            border-radius:9999px;
-                                            font-weight:700;
-                                            font-size:14px;
-                                            box-shadow:0 6px 15px rgba(0,0,0,0.25);
-                                            border:none;
-                                            cursor:pointer;
-                                        "
+                                    background:#3e7738;
+                                    color:#fff;
+                                    padding:20px 30px;
+                                    border-radius:9999px;
+                                    font-weight:700;
+                                    font-size:14px;
+                                    box-shadow:0 6px 15px rgba(0,0,0,0.25);
+                                    border:none;
+                                    cursor:pointer;
+                                "
                                 onmouseover="this.style.background='#4b8f44'"
                                 onmouseout="this.style.background='#3e7738'">
                                 Salvar Palpites
                             </button>
                         </div>
-                        <!--/div-->
 
                     </form>
                 </div>
