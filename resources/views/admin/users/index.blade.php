@@ -76,7 +76,7 @@
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('Pagamento') }}
                                     </th>
-''                                </tr>
+                                </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($users as $user)
