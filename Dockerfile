@@ -88,7 +88,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
     && sed -i '/<\/VirtualHost>/i \    SetEnv HTTPS On\n    PassEnv HTTPS' /etc/apache2/sites-available/000-default.conf
     
 # Limpa os caches internos do Laravel antes de iniciar o Apache
-RUN ./artisan config:clear && ./artisan route:clear && ./artisan cache:clear && ./artisan view:clear
+RUN ./artisan config:clear && ./artisan route:clear && ./artisan view:clear
 
 EXPOSE 80
 
