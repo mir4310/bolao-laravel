@@ -74,6 +74,11 @@ RUN php artisan config:clear \
     && php artisan route:clear \
     && php artisan view:clear
 
+# Cria o arquivo com o número da compilação
+ARG BUILD_NUMBER
+ARG BUILD_DATE
+RUN echo "Build ARM: ${BUILD_NUMBER} - ${BUILD_DATE}" > .compile
+
 # ---------------------------------------------------------------
 # 5. Script de entrypoint — sobe PHP-FPM + Nginx juntos
 # ---------------------------------------------------------------
