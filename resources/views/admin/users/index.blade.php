@@ -62,6 +62,9 @@
                                             Nome
                                         </a>
                                     </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        {{ __('Telefone') }}
+                                    </th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">
                                         <a href="{{ request()->fullUrlWithQuery([
                                                 'sort' => 'created_at',
@@ -73,7 +76,7 @@
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('Pagamento') }}
                                     </th>
-                                </tr>
+''                                </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($users as $user)
@@ -86,13 +89,21 @@
                                             alt="{{ $user->name }}">
 
                                         <div class="flex flex-col mr-2 text-left">
-                                            <span class="text-base font-semibold text-gray-800">
+                                            <span class="text-base font-semibold text-gray-800 flex items-center gap-1.5">
                                                 {{ $user->name }}
+                                                @if($user->role === 'administrador')
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
+                                                    Admin
+                                                </span>
+                                                @endif
                                             </span>
                                             <span class="text-sm text-gray-400">
                                                 {{ $user->email }}
                                             </span>
                                         </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">
+                                        {{ $user->telefone ?? '—' }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                                         {{ $user->created_at->format('d/m/Y') }}

@@ -76,13 +76,16 @@ class AdminUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'data_pagamento' => ['nullable', 'date']
+            'data_pagamento' => ['nullable', 'date'],
+            'role' => ['nullable', 'string', 'in:administrador,usuario'],
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'data_pagamento' => $request->data_pagamento
+            'data_pagamento' => $request->data_pagamento,
+            // checkbox: envia 'administrador' se marcado, null se desmarcado
+            'role' => $request->input('role') === 'administrador' ? 'administrador' : 'usuario',
         ];
 
         if ($request->filled('password')) {

@@ -302,19 +302,19 @@
                         <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
                             @forelse($games as $game)
                             @php
-                            $gameDateTime = \Carbon\Carbon::parse($game->date . ' ' . $game->hour);
-                            $isLocked = $gameDateTime->isPast() || $game->status != 0 || $game->email_sent != 0;
+                            $gameDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $game->date . ' ' . $game->hour, 'America/Sao_Paulo');
+                            $isLocked = now()->diffInMinutes($gameDateTime, false) < 60 || $game->status != 0 || $game->email_sent != 0;
                             $palpite = $game->userPalpite;
                             $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
 
                             @endphp
-                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px;" @class(['border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
+                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px;" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
 
-                                <div class="text-center text-s text-gray-500 mb-2">
-                                    <span class="font-bold block text-gray-700">
+                                <div class="text-center text-sm text-gray-500 mb-2">
+                                    <span class="font-bold block text-gray-700 text-base">
                                         Fase: {{ ucfirst(str_replace('_', ' ', $game->fase)) }} - Grupo: {{ $game->group }}
                                     </span>
-                                    {{ $gameDateTime->format('d/m/Y H:i') }} - {{ $game->city }}
+                                    {{ $gameDateTime->format('d/m/Y H:i') }}
                                 </div>
 
                                 <!-- Times e Inputs -->
@@ -330,7 +330,7 @@
                                         <span class="text-sm md:text-s text-center leading-tight truncate w-full">
                                             {{ $game->homeTeam->name }}
                                             @if($game->status >= 1)
-                                            <br />({{$game->home_team_goals ?? 0}})
+                                            <br /><b><span class="text-lg">({{$game->home_team_goals ?? 0}})</span></b>
                                             @endif
                                         </span>
                                     </div>
@@ -338,7 +338,7 @@
                                     <!-- Placar -->
                                     <div class="flex flex-col md:flex-row items-center gap-1 md:gap-2 justify-center shrink-0">
                                         @if($isLocked)
-                                        <span class="text-gray-400 font-bold text-xl md:text-3xl">
+                                        <span class="text-gray-400 font-bold text-xl md:text-2xl">
                                             @if(!$erroPalpite)
                                             {{ old('palpites.'.$game->id.'.home_goals', $palpite->home_team_goals) }}
                                             x
@@ -378,16 +378,21 @@
                                         <span class="text-sm md:text-s text-center leading-tight truncate w-full">
                                             {{ $game->awayTeam->name }}
                                             @if($game->status >= 1)
-                                            <br />({{$game->away_team_goals ?? 0}})
+                                            <br /><b><span class="text-lg">({{$game->away_team_goals ?? 0}})</span></b>
                                             @endif
                                         </span>
                                     </div>
                                 </div>
 
                                 @if($isLocked)
-                                <div class="mt-2 text-center text-xs text-gray-500">
-                                    Aposta encerrada! Pontuação na partida: {{ optional($palpite)->pontos ?? 0 }}
-                                </div>
+                                @php $pontos = optional($palpite)->pontos ?? 0; @endphp
+                                <span class="absolute top-2 right-2 inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold
+                                    {{ $pontos > 0 ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-gray-200 text-gray-500 border border-gray-300' }}">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                    </svg>
+                                    Pontos: {{ $pontos }}
+                                </span>
                                 @endif
 
                             </div>
@@ -464,10 +469,19 @@
                         statusMessageDiv.classList.remove('hidden', 'bg-red-100', 'border-red-400', 'text-red-700', 'bg-green-100', 'border-green-400', 'text-green-700');
 
                         if (status === 200 && body.success) {
-                            // Sucesso
-                            statusMessageDiv.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
-                            showToast(body.success);
-                            atualizarCoresCards();
+                            if (body.jogos_ignorados > 0) {
+                                // Havia jogos cujo prazo venceu enquanto a tela estava aberta
+                                showToast(
+                                    'Atenção: ' + body.jogos_ignorados + ' jogo(s) com prazo encerrado não foram salvos. Atualizando a tela...',
+                                    'warning',
+                                    3000
+                                );
+                                setTimeout(() => window.location.reload(), 2500);
+                            } else {
+                                // Sucesso normal — só atualiza as cores
+                                showToast(body.success);
+                                atualizarCoresCards();
+                            }
                         } else {
                             // Erro de validação ou outro erro do servidor
                             const firstError = body.errors ? Object.values(body.errors)[0][0] : 'Ocorreu um erro inesperado.';

@@ -74,7 +74,11 @@
                                     <td class="px-4 py-2">1 ponto — Total de gols</td>
                                 </tr>
                                 <tr>
-                                    <td class="px-4 py-2">Brasil 0 x 2 Marrocoss</td>
+                                    <td class="px-4 py-2">Brasil 0 x 1 Marrocos</td>
+                                    <td class="px-4 py-2">1 ponto — Gols de uma das seleções</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-2">Brasil 0 x 2 Marrocos</td>
                                     <td class="px-4 py-2">0 pontos</td>
                                 </tr>
                             </tbody>

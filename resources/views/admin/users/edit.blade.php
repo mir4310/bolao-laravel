@@ -30,6 +30,21 @@
                             <x-text-input id="data_pagamento" name="data_pagamento" type="date" class="mt-1 block w-full" :value="old('data_pagamento', optional($user->data_pagamento)->format('Y-m-d'))" />
                             <x-input-error class="mt-2" :messages="$errors->get('data_pagamento')" />
                         </div>
+
+                        {{-- Campo de Role / Admin --}}
+                        <div class="flex items-start gap-3 p-4 rounded-lg border border-gray-200 bg-gray-50">
+                            <div class="flex items-center h-5 mt-0.5">
+                                <input id="role_admin" name="role" type="checkbox" value="administrador"
+                                    {{ old('role', $user->role) === 'administrador' ? 'checked' : '' }}
+                                    class="w-4 h-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                            </div>
+                            <div>
+                                <label for="role_admin" class="font-semibold text-sm text-gray-800 cursor-pointer">
+                                    Administrador
+                                </label>
+                                <p class="text-xs text-gray-500 mt-0.5">Concede acesso total ao painel administrativo.</p>
+                            </div>
+                        </div>
                         <!--div>
                             <x-input-label for="password" :value="__('Nova Senha (deixe em branco para manter)')" />
                             <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" />
