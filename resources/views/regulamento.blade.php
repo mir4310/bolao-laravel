@@ -111,15 +111,15 @@
                     <p><b>4.1.</b> Jogos suspensos ou adiados não pontuam.</p>
                     <p><b>4.2.</b> Alterações posteriores em resultados não mudam a pontuação.</p>
                     <p><b>4.3.</b> A pontuação considera o tempo regulamentar (90 minutos + acréscimos) e a prorrogação a partir da segunda fase (16 avos de final).</p>
-                    <p><b>4.4.</b> Bolão sem fins lucrativos.</p>
+                    <p><b>4.4.</b> Bolão sem fins lucrativos. Todo o valor arrecadado será redistribuído aos vencedores.</p>
                 </section>
 
                 <section>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">Premiação</h3>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Premiação até o momento</h3>
 
-                    <p><b>1º Lugar:</b> 60% do total arrecadado</p>
-                    <p><b>2º Lugar:</b> 30% do total arrecadado</p>
-                    <p><b>3º Lugar:</b> 10% do total arrecadado</p>
+                    <p><b>1º Lugar: R$ {{ number_format(($participantes ?? 0) * ($valorBolao ?? 30) * 0.6, 2, ',', '.') }}</b> - 60% do total arrecadado.</p>
+                    <p><b>2º Lugar: R$ {{ number_format(($participantes ?? 0) * ($valorBolao ?? 30) * 0.3, 2, ',', '.') }}</b> - 30% do total arrecadado.</p>
+                    <p><b>3º Lugar: R$ {{ number_format(($participantes ?? 0) * ($valorBolao ?? 30) * 0.1, 2, ',', '.') }}</b> - 10% do total arrecadado.</p>
 
                     <div class="mt-4 p-4 bg-gray-50 border rounded-lg text-center">
                         <p>Total de participantes pagos: <b>{{ $participantes ?? '-' }}</b></p>
