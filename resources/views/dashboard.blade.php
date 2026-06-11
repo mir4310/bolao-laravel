@@ -334,7 +334,7 @@
                                     @endif
                                 </span>
 
-                                <div class="text-center text-sm text-gray-500 mb-2 pt-6 md:pt-4">
+                                <div class="text-center text-sm text-gray-500 mb-2 pt-6 md:pt-4" style="padding-top: 0.5rem">
                                     <span class="font-bold block text-gray-700 text-base">
                                         Fase: {{ ucfirst(str_replace('_', ' ', $game->fase)) }} - Grupo: {{ $game->group }}
                                     </span>
