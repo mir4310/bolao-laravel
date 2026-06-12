@@ -322,13 +322,13 @@
                             $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
 
                             @endphp
-                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px;" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])">
+                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px; @if($game->status == 0) padding-bottom: 22px; @endif" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])>
 
                                 <span class="absolute top-2 left-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border
                                     @if($game->status == 0)
                                         bg-blue-50 text-blue-700 border-blue-200
                                     @elseif($game->status == 1)
-                                        bg-amber-50 text-amber-700 border-amber-200 animate-pulse
+                                        bg-amber-50 text-amber-700 border-amber-200 @if(!$gameDateTime->isFuture()) animate-pulse @endif
                                     @else
                                         bg-gray-100 text-gray-600 border-gray-200
                                     @endif">
@@ -343,7 +343,11 @@
                                     @if($game->status == 0)
                                         Agendada
                                     @elseif($game->status == 1)
-                                        Em Andamento
+                                        @if($gameDateTime->isFuture())
+                                            Em breve
+                                        @else
+                                            Em Andamento
+                                        @endif
                                     @else
                                         Encerrada
                                     @endif
@@ -378,8 +382,8 @@
                                     <div class="flex flex-row items-center gap-1 sm:gap-2 justify-center shrink-0">
                                         @if($isLocked)
                                         <span @class([
-                                            'text-gray-400 font-bold text-center block w-full',
-                                            'text-xl md:text-2xl' => !$erroPalpite,
+                                            'text-gray-500 text-center block w-full',
+                                            'font-bold text-xl md:text-2xl gap-2 px-4 py-2 bg-gray-200 rounded-lg' => !$erroPalpite,
                                             'text-base sm:text-base md:text-lg font-semibold' => $erroPalpite
                                         ])>
                                             @if(!$erroPalpite)

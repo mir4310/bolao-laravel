@@ -57,7 +57,7 @@
                                         </div>
 
                                         <div class="mt-2 text-xs sm:text-sm italic text-gray-500">
-                                            Partida em andamento
+                                            {{ $partida->status }}
                                         </div>
 
                                     </th>
@@ -307,12 +307,15 @@
         </div>
     </div>
     @if(count($partidasEmAndamento) > 0)
+    @php
+        $hasActiveGame = collect($partidasEmAndamento)->contains(fn($p) => !$p->isFuture);
+    @endphp
     <div id="countdown-badge" 
          onclick="window.location.reload();"
          title="Clique para atualizar agora"
-         class="fixed bottom-4 right-4 bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl z-50 flex items-center gap-2 hover:bg-amber-100 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer select-none animate-pulse">
+         class="fixed bottom-4 right-4 bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl z-50 flex items-center gap-2 hover:bg-amber-100 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer select-none @if($hasActiveGame) animate-pulse @endif">
         <span class="h-2 w-2 rounded-full bg-amber-500"></span>
-        <span>Partida em andamento.<br/>Atualizando em <span id="countdown-timer" class="font-bold text-amber-900">60</span>s</span>
+        <span>@if($hasActiveGame) Partida em andamento. @else Partida em breve. @endif<br/>Atualizando em <span id="countdown-timer" class="font-bold text-amber-900">60</span>s</span>
     </div>
 
     <script>

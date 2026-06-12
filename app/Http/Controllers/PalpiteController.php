@@ -116,6 +116,9 @@ class PalpiteController extends Controller
             return $palpite;
         })->sortByDesc('pontos')->values();
 
+        $gameDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $game->date . ' ' . $game->hour, 'America/Sao_Paulo');
+        $isFuture = $gameDateTime->isFuture();
+
         // Monta o objeto que a view espera
         $partida = (object) [
             'homeTeam' => $game->homeTeam->name,
@@ -130,6 +133,7 @@ class PalpiteController extends Controller
             'fase' => $game->fase,
             'pontos' => $game->pontos,
             'status' => $game->status,
+            'isFuture' => $isFuture,
             'palpites' => $listaPalpites,
         ];
 

@@ -26,6 +26,10 @@ class RankingController extends Controller
         foreach ($gamesEmAndamento as $game) {
             $palpites = Palpite::with(['user'])->where('game_id', $game->id)->orderByDesc('pontos')->get();
 
+            $gameDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $game->date . ' ' . $game->hour, 'America/Sao_Paulo');
+            $isFuture = $gameDateTime->isFuture();
+            $statusText = $isFuture ? 'Em breve' : 'Em Andamento';
+
             $partidasEmAndamento[] = (object)[
                 'homeTeam' => $game->homeTeam->name,
                 'awayTeam' => $game->awayTeam->name,
@@ -33,7 +37,10 @@ class RankingController extends Controller
                 'awayTeamBandeira' => $game->awayTeam->bandeira,
                 'homeGoals' => $game->home_team_goals,
                 'awayGoals' => $game->away_team_goals,
-                'status' => 'Em Andamento',
+                'status' => $statusText,
+                'isFuture' => $isFuture,
+                'date' => $game->date,
+                'hour' => $game->hour,
                 'palpites' => $palpites
             ];
         }
