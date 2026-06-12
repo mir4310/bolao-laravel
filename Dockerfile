@@ -36,10 +36,14 @@ RUN apt-get update && apt-get install -y \
     unzip \
     mariadb-client \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip \
-    && pecl channel-update pecl.php.net \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Clona a extensão do Redis direto do GitHub oficial, compila e ativa. Feito isso quando o PECL estava offline
+RUN git clone https://github.com/phpredis/phpredis.git /usr/src/php/ext/redis \
+    && cd /usr/src/php/ext/redis \
+    && git checkout 6.1.0 \
+    && docker-php-ext-install redis \
+    && docker-php-ext-enable redis
 
 # ---------------------------------------------------------------
 # 2. Configuração do PHP-FPM
