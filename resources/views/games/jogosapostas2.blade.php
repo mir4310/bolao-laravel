@@ -185,6 +185,30 @@
 
                 </div>
             </div>
-        </div>
     </div>
+    @if($partida->status == 1)
+    <div id="countdown-badge" 
+         onclick="window.location.reload();"
+         title="Clique para atualizar agora"
+         class="fixed bottom-4 right-4 bg-amber-50 text-amber-700 border border-amber-200 px-4 py-2.5 rounded-full text-xs font-semibold shadow-xl z-50 flex items-center gap-2 hover:bg-amber-100 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer select-none animate-pulse">
+        <span class="h-2 w-2 rounded-full bg-amber-500"></span>
+        <span>Partida em andamento.<br/>Atualizando em <span id="countdown-timer" class="font-bold text-amber-900">60</span>s</span>
+    </div>
+
+    <script>
+        let timeLeft = 60;
+        const timerElement = document.getElementById('countdown-timer');
+        
+        const countdownInterval = setInterval(function() {
+            timeLeft--;
+            if (timerElement) {
+                timerElement.textContent = timeLeft;
+            }
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                window.location.reload();
+            }
+        }, 1000);
+    </script>
+    @endif
 </x-app-layout>
