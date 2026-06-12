@@ -79,7 +79,8 @@ class User extends Authenticatable
 
     public function getAvatarAttribute($value)
     {
-        return url('/avatar/' . $this->id . '.svg');
+        $timestamp = $this->updated_at?->timestamp ?? time();
+        return url('/avatar/' . $this->id . '.svg?t=' . $timestamp);
     }
 
     /**
