@@ -297,7 +297,7 @@
                 class="text-sm text-gray-600">{{ __('Saved.') }}</p>
             @endif
         </div>
-        <input type="hidden" name="avatar" id="avatar" value="{{ old('avatar', $user->avatar) }}" />
+        <input type="hidden" name="avatar" id="avatar" value="{{ old('avatar', $user->getRawOriginal('avatar')) }}" />
     </form>
 
     <script>

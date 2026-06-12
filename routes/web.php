@@ -16,6 +16,22 @@ Route::get('/', function () {
 
 Route::get('/jogos-apostas/{id}', [SiteController::class, 'jogoApostas']);
 
+Route::get('/avatar/{id}.svg', function ($id) {
+    $path = "avatars/{$id}.svg";
+    if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+        return response()->file(\Illuminate\Support\Facades\Storage::disk('public')->path($path), [
+            'Content-Type' => 'image/svg+xml'
+        ]);
+    }
+
+    $user = \App\Models\User::find($id);
+    if ($user && $user->getRawOriginal('avatar')) {
+        return redirect($user->getRawOriginal('avatar'));
+    }
+
+    return response()->file(public_path('img/no-avatar.png'));
+})->name('user.avatar');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [PalpiteController::class, 'index'])->name('dashboard');
@@ -44,6 +60,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/games/{game}', [AdminGameController::class, 'destroy'])->name('admin.games.destroy');
 
     Route::resource('admin/users', AdminUserController::class)->names('admin.users');
+    Route::post('/admin/users/sync-avatars', [AdminUserController::class, 'syncAvatars'])->name('admin.users.sync-avatars');
 
     // Outras rotas de admin aqui...
 });

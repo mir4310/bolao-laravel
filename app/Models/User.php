@@ -76,4 +76,47 @@ class User extends Authenticatable
     {
         return $this->hasOne(\App\Models\ChuteDeOuro::class);
     }
+
+    public function getAvatarAttribute($value)
+    {
+        return url('/avatar/' . $this->id . '.svg');
+    }
+
+    /**
+     * Cacheia o avatar externo localmente no disco público.
+     */
+    public function downloadAndCacheAvatar(): bool
+    {
+        $avatarUrl = $this->getRawOriginal('avatar');
+        if (empty($avatarUrl)) {
+            return false;
+        }
+
+        if (str_contains($avatarUrl, '/storage/avatars/')) {
+            return false;
+        }
+
+        if (!filter_var($avatarUrl, FILTER_VALIDATE_URL) || !str_starts_with($avatarUrl, 'http')) {
+            return false;
+        }
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)->get($avatarUrl);
+            if ($response->successful()) {
+                $content = $response->body();
+
+                if (!\Illuminate\Support\Facades\Storage::disk('public')->exists('avatars')) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->makeDirectory('avatars');
+                }
+
+                $fileName = 'avatars/' . $this->id . '.svg';
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $content);
+                return true;
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Erro ao cachear avatar do usuário {$this->id}: " . $e->getMessage());
+        }
+
+        return false;
+    }
 }
