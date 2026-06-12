@@ -34,8 +34,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    mariadb-client \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip \
+    mariadb-client
+
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip \
     && pecl install redis \
     && docker-php-ext-enable redis \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
