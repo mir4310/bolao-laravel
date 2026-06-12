@@ -83,18 +83,29 @@
                                 @forelse($partida->palpites as $palpites)
 
                                 <!-- 📱 MOBILE (Card) -->
-                                <tr class="sm:hidden">
+                                <tr @class([
+                                    'sm:hidden',
+                                    'bg-zinc-200' => $palpites->user_id === auth()->id()
+                                ])>
                                     <td colspan="3" class="px-4 py-4">
                                         <div class="flex flex-col gap-1">
 
-                                            <span class="font-semibold text-gray-600 text-lg break-words">
+                                            <span @class([
+                                                'text-lg break-words',
+                                                'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                'font-semibold text-gray-600' => $palpites->user_id !== auth()->id()
+                                            ])>
                                                 <div class="flex items-center justify-center gap-3">
                                                     <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                                     <span>{{ $palpites->user->name }}</span>
                                                 </div>
                                             </span>
 
-                                            <span class="text-gray-600 text-lg text-center">
+                                            <span @class([
+                                                'text-lg text-center',
+                                                'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
+                                                'text-gray-600' => $palpites->user_id !== auth()->id()
+                                            ])>
                                                 <span class="font-medium">Palpite:</span>
                                                 @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
                                                 Não palpitou
@@ -108,15 +119,27 @@
                                 </tr>
 
                                 <!-- 💻 DESKTOP (Tabela Normal) -->
-                                <tr class="hidden sm:table-row hover:bg-gray-100">
+                                <tr @class([
+                                    'hidden sm:table-row hover:bg-gray-100',
+                                    'bg-zinc-200' => $palpites->user_id === auth()->id(),
+                                    'hover:bg-zinc-300' => $palpites->user_id === auth()->id()
+                                ])>
                                     <td class="px-6 py-3 break-words">
-                                        <div class="flex items-center gap-3 text-gray-600 text-lg">
+                                        <div @class([
+                                            'flex items-center gap-3 text-lg',
+                                            'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
+                                            'text-gray-600' => $palpites->user_id !== auth()->id()
+                                        ])>
                                             <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                             <span>{{ $palpites->user->name }}</span>
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-3 text-center font-medium text-gray-600 text-base">
+                                    <td @class([
+                                        'px-6 py-3 text-center text-base',
+                                        'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                        'font-medium text-gray-600' => $palpites->user_id !== auth()->id()
+                                    ])>
                                         @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
                                         Não palpitou
                                         @else
@@ -124,7 +147,11 @@
                                         @endif
                                     </td>
 
-                                    <td class="px-6 py-3 text-center font-semibold text-gray-600 text-base">
+                                    <td @class([
+                                        'px-6 py-3 text-center text-base',
+                                        'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                        'font-semibold text-gray-600' => $palpites->user_id !== auth()->id()
+                                    ])>
                                         {{ $palpites->pontos }}
                                     </td>
                                 </tr>
@@ -189,8 +216,21 @@
                                 @endif
 
 
-                                <tr @class(['bg-green-100'=> $posicao==1, 'bg-sky-100'=> $posicao==2, 'bg-yellow-100'=> $posicao==3, 'hover:bg-green-200'=> $posicao==1, 'hover:bg-sky-200'=> $posicao==2, 'hover:bg-yellow-200'=> $posicao==3 ] )>
-                                    <td @class(['px-2 py-2 whitespace-nowrap text-sm md:text-base text-center font-medium text-gray-900 min-w-[5ch] sm:min-w-[10ch] lg:min-w-[15ch]'])>
+                                <tr @class([
+                                    'bg-green-100' => $posicao == 1,
+                                    'bg-sky-100' => $posicao == 2,
+                                    'bg-yellow-100' => $posicao == 3,
+                                    'hover:bg-green-200' => $posicao == 1,
+                                    'hover:bg-sky-200' => $posicao == 2,
+                                    'hover:bg-yellow-200' => $posicao == 3,
+                                    'bg-zinc-200' => $user->id === auth()->id() && $posicao > 3,
+                                    'hover:bg-zinc-300' => $user->id === auth()->id() && $posicao > 3,
+                                ])>
+                                    <td @class([
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center min-w-[5ch] sm:min-w-[10ch] lg:min-w-[15ch]',
+                                        'font-bold text-gray-950' => $user->id === auth()->id(),
+                                        'font-medium text-gray-900' => $user->id !== auth()->id()
+                                    ])>
                                         {{ $posicao }}º
                                     </td>
                                     <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500 w-full max-w-[1px]">
@@ -201,7 +241,11 @@
                                                 title="{{ $user->name }}"
                                                 alt="{{ $user->name }}">
 
-                                            <span class="text-gray-800 text-sm md:text-base ">
+                                            <span @class([
+                                                'text-sm md:text-base',
+                                                'text-gray-950 font-bold' => $user->id === auth()->id(),
+                                                'text-gray-800' => $user->id !== auth()->id()
+                                            ])>
                                                 {{ $user->name }}
                                             </span>
                                             @if(is_null($user->data_pagamento))
@@ -215,7 +259,11 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-2 py-2 whitespace-nowrap text-sm md:text-base text-center font-medium text-gray-700 min-w-[5ch] sm:min-w-[15ch] lg:min-w-[30ch]">
+                                    <td @class([
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center min-w-[5ch] sm:min-w-[15ch] lg:min-w-[30ch]',
+                                        'font-bold text-gray-950' => $user->id === auth()->id(),
+                                        'font-medium text-gray-700' => $user->id !== auth()->id()
+                                    ])>
                                         {{ $user->palpites_sum_pontos ?? 0 }}
                                     </td>
                                 </tr>

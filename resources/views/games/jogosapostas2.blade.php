@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Apostas da Partida: ') }}
+            {{ __('Apostas da Partida: ') }} {{ $partida->homeTeam }} x {{ $partida->awayTeam }}
         </h2>
     </x-slot>
 
@@ -9,6 +9,15 @@
         <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-4 sm:p-6 text-gray-900">
+
+                    <div class="mb-4">
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                            Voltar para Palpites
+                        </a>
+                    </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full divide-y divide-gray-200 text-sm">
@@ -30,15 +39,21 @@
                                             <!-- Placar -->
                                             <div class="flex flex-col sm:flex-row items-center gap-2 text-center">
 
-                                                <span class="font-medium">
+                                                <span class="font-medium text-gray-800 text-base sm:text-lg">
                                                     {{ $partida->homeTeam }}
                                                 </span>
 
-                                                <div class="flex items-center gap-1 font-bold text-lg">
-                                                    <span>x</span>
+                                                <div class="flex items-center gap-1 font-bold text-lg sm:text-xl text-gray-900 bg-gray-100 px-3 py-1 rounded-lg">
+                                                    @if($partida->status >= 1)
+                                                        <span>{{ $partida->homeGoals ?? 0 }}</span>
+                                                    @endif
+                                                    <span class="text-gray-400">x</span>
+                                                    @if($partida->status >= 1)
+                                                        <span>{{ $partida->awayGoals ?? 0 }}</span>
+                                                    @endif
                                                 </div>
 
-                                                <span class="font-medium">
+                                                <span class="font-medium text-gray-800 text-base sm:text-lg">
                                                     {{ $partida->awayTeam }}
                                                 </span>
 
@@ -61,11 +76,14 @@
 
                                 <!-- Cabeçalho Desktop -->
                                 <tr class="hidden sm:table-row">
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Nome
                                     </th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                         Palpite
+                                    </th>
+                                    <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                        Pontos
                                     </th>
                                 </tr>
                             </thead>
@@ -76,47 +94,79 @@
                                 @forelse($partida->palpites as $palpites)
 
                                 <!-- 📱 MOBILE (Card) -->
-                                <tr class="sm:hidden">
+                                <tr @class([
+                                    'sm:hidden',
+                                    'bg-zinc-200' => $palpites->user_id === auth()->id()
+                                ])>
                                     <td colspan="3" class="px-4 py-4">
-                                        <div class="flex flex-col gap-1">
+                                        <div class="flex flex-col gap-2">
 
-                                            <span class="font-semibold text-gray-600 text-lg break-words">
-                                                <div class="flex items-center justify-center gap-3">
-                                                    {{ $palpites->user->avatar }}
-                                                    <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                            <span @class([
+                                                'text-base break-words',
+                                                'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                'font-semibold text-gray-600' => $palpites->user_id !== auth()->id()
+                                            ])>
+                                                <div class="flex items-center justify-start gap-3">
+                                                    <img class="w-10 h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                                     <span>{{ $palpites->user->name }}</span>
                                                 </div>
                                             </span>
 
-                                            <span class="text-gray-600 text-lg text-center">
-                                                <span class="font-medium">Palpite:</span>
-                                                @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                                Não palpitou
-                                                @else
-                                                {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
-                                                @endif
-                                            </span>
+                                            <div class="flex items-center justify-between mt-1">
+                                                <span @class([
+                                                    'text-base',
+                                                    'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
+                                                    'text-gray-600' => $palpites->user_id !== auth()->id()
+                                                ])>
+                                                    <span class="font-medium text-sm text-gray-400">Palpite:</span>
+                                                    @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
+                                                        <span class="italic text-gray-400">Não palpitou</span>
+                                                    @else
+                                                        {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
+                                                    @endif
+                                                </span>
+                                                <span class="inline-flex items-center justify-center min-w-[50px] text-center px-2.5 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 border border-green-300">
+                                                    {{ $palpites->pontos }} pts
+                                                </span>
+                                            </div>
                                         </div>
                                     </td>
                                 </tr>
 
                                 <!-- 💻 DESKTOP (Tabela Normal) -->
-                                <tr class="hidden sm:table-row hover:bg-gray-100">
-                                    <td class="px-6 py-3 break-words">
-                                        <div class="flex items-center gap-3 text-gray-600 text-lg">
-                                            <img class="w-10 h-10 md:w-10 md:h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                <tr @class([
+                                    'hidden sm:table-row hover:bg-gray-50 transition-colors',
+                                    'bg-zinc-200' => $palpites->user_id === auth()->id(),
+                                    'hover:bg-zinc-300' => $palpites->user_id === auth()->id()
+                                ])>
+                                    <td class="px-6 py-3.5 break-words">
+                                        <div @class([
+                                            'flex items-center gap-3 text-base',
+                                            'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                            'text-gray-600' => $palpites->user_id !== auth()->id()
+                                        ])>
+                                            <img class="w-10 h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                             <span>{{ $palpites->user->name }}</span>
                                         </div>
                                     </td>
 
-                                    <td class="px-6 py-3 text-center font-medium text-gray-600 text-base">
+                                    <td @class([
+                                        'px-6 py-3.5 text-center text-base',
+                                        'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                        'font-medium text-gray-600' => $palpites->user_id !== auth()->id()
+                                    ])>
                                         @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                        Não palpitou
+                                            <span class="italic text-gray-400">Não palpitou</span>
                                         @else
-                                        {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
+                                            {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                         @endif
                                     </td>
 
+                                    <td class="px-6 py-3.5 text-center">
+                                        <span class="inline-flex items-center justify-center min-w-[50px] text-center px-2.5 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 border border-green-300">
+                                            {{ $palpites->pontos }} pts
+                                        </span>
+                                    </td>
                                 </tr>
 
                                 @empty
@@ -129,7 +179,7 @@
 
                                 @endforelse
 
-                            </tbody>
+                             </tbody>
                         </table>
                     </div>
 

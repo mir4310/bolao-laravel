@@ -5,6 +5,21 @@
         </h2>
     </x-slot>
 
+    <style>
+        @media (max-width: 767px) {
+            /* Chrome, Safari, Edge, Opera */
+            input.no-spin-mobile::-webkit-outer-spin-button,
+            input.no-spin-mobile::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            /* Firefox */
+            input.no-spin-mobile[type=number] {
+                -moz-appearance: textfield;
+            }
+        }
+    </style>
+
     <!-- Toast AJAX Status Message -->
     <div id="ajax-status-message"
         class="fixed top-5 right-5 z-50 hidden max-w-sm px-4 py-3 rounded-lg shadow-lg text-white transition-all duration-300">
@@ -342,7 +357,7 @@
                                 </div>
 
                                 <!-- Times e Inputs -->
-                                <div class="flex flex-col md:flex-row items-center justify-between gap-2">
+                                <div class="flex flex-row items-center justify-between gap-2">
 
                                     <!-- Mandante -->
                                     <div class="flex flex-col items-center flex-1 min-w-[72px]">
@@ -360,22 +375,26 @@
                                     </div>
 
                                     <!-- Placar -->
-                                    <div class="flex flex-col md:flex-row items-center gap-1 md:gap-2 justify-center shrink-0">
+                                    <div class="flex flex-row items-center gap-1 sm:gap-2 justify-center shrink-0">
                                         @if($isLocked)
-                                        <span class="text-gray-400 font-bold text-xl md:text-2xl">
+                                        <span @class([
+                                            'text-gray-400 font-bold text-center block w-full',
+                                            'text-xl md:text-2xl' => !$erroPalpite,
+                                            'text-base sm:text-base md:text-lg font-semibold' => $erroPalpite
+                                        ])>
                                             @if(!$erroPalpite)
                                             {{ old('palpites.'.$game->id.'.home_goals', $palpite->home_team_goals) }}
                                             x
                                             {{ old('palpites.'.$game->id.'.away_goals', $palpite->away_team_goals) }}
                                             @else
-                                            Você não palpitou! 😢
+                                            Você não palpitou<br/>😢 😢 😢
                                             @endif
                                         </span>
                                         @else
                                         <input type="number"
                                             name="palpites[{{ $game->id }}][home_goals]"
                                             value="{{ old('palpites.'.$game->id.'.home_goals', $palpite->home_team_goals ?? '') }}"
-                                            class="w-[8rem] sm:w-[8rem] sm:w-[8rem] lg:w-[5rem] h-10 md:h-11 text-center border border-gray-300 rounded-md shadow-sm
+                                            class="w-10 sm:w-12 md:w-[8rem] lg:w-[5rem] h-10 md:h-11 text-center border border-gray-300 rounded-md shadow-sm no-spin-mobile
                                                           focus:border-indigo-500 focus:ring-indigo-500 font-bold text-base md:text-lg p-0"
                                             min="0"
                                             {{ $isLocked ? 'disabled' : '' }}>
@@ -385,7 +404,7 @@
                                         <input type="number"
                                             name="palpites[{{ $game->id }}][away_goals]"
                                             value="{{ old('palpites.'.$game->id.'.away_goals', $palpite->away_team_goals ?? '') }}"
-                                            class="w-[8rem] sm:w-[8rem] sm:w-[8rem] lg:w-[5rem] h-10 md:h-11 text-center border border-gray-300 rounded-md shadow-sm
+                                            class="w-10 sm:w-12 md:w-[8rem] lg:w-[5rem] h-10 md:h-11 text-center border border-gray-300 rounded-md shadow-sm no-spin-mobile
                                                           focus:border-indigo-500 focus:ring-indigo-500 font-bold text-base md:text-lg p-0"
                                             min="0"
                                             {{ $isLocked ? 'disabled' : '' }}>
@@ -417,6 +436,18 @@
                                     </svg>
                                     Pontos: {{ $pontos }}
                                 </span>
+                                @endif
+
+                                @if($game->status >= 1)
+                                <div class="mt-4 pt-3 border-t border-gray-200 flex justify-center">
+                                    <a href="{{ route('partida.apostas', $game->id) }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold rounded-lg transition duration-200 shadow-sm border border-indigo-100">
+                                        <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                        Ver apostas dos participantes
+                                    </a>
+                                </div>
                                 @endif
 
                             </div>
@@ -733,14 +764,20 @@
                 '6': 'Final',
             };
 
-            // Helpers de data (comparação em YYYY-MM-DD sem horas)
+            // Helpers de data (comparação em YYYY-MM-DD sem horas no fuso local)
+            function getLocalDateStr(d) {
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
             function todayStr() {
-                return new Date().toISOString().slice(0, 10);
+                return getLocalDateStr(new Date());
             }
             function offsetDateStr(days) {
                 const d = new Date();
                 d.setDate(d.getDate() + days);
-                return d.toISOString().slice(0, 10);
+                return getLocalDateStr(d);
             }
 
             const dateBtns      = document.querySelectorAll('.date-filter-btn');
