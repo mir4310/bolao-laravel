@@ -20,7 +20,7 @@
                     </div>
 
                     <div>
-                        <table class="w-full divide-y divide-gray-200 text-sm">
+                        <table class="w-full table-fixed divide-y divide-gray-200 text-sm">
 
                             <!-- HEADER -->
                             <thead class="bg-gray-50">
@@ -102,7 +102,7 @@
                                      'sm:hidden',
                                      'bg-zinc-200' => $palpites->user_id === auth()->id()
                                  ])>
-                                 <td colspan="3" class="px-3 py-2">
+                                 <td colspan="3" class="px-3 py-2 overflow-hidden">
                                      <div class="flex items-center justify-between gap-2">
 
                                          <!-- Avatar + Nome + Palpite -->

@@ -13,8 +13,25 @@
                 <div class="p-4 sm:p-6 text-gray-900">
 
                     <div class="overflow-x-auto">
-                        <table class="w-full divide-y divide-gray-200 text-sm">
-
+                        <style>
+                            @media (min-width: 640px) {
+                                .col-partida-nome {
+                                    width: 60%;
+                                }
+                                .col-partida-palpite {
+                                    width: 20%;
+                                }
+                                .col-partida-pontos {
+                                    width: 20%;
+                                }
+                            }
+                        </style>
+                        <table class="w-full table-fixed divide-y divide-gray-200 text-sm">
+                            <colgroup>
+                                <col class="col-partida-nome">
+                                <col class="col-partida-palpite">
+                                <col class="col-partida-pontos">
+                            </colgroup>
                             <!-- HEADER -->
                             <thead class="bg-gray-50">
                                 <tr>
@@ -89,7 +106,7 @@
                                     'sm:hidden',
                                     'bg-zinc-200' => $palpites->user_id === auth()->id()
                                 ])>
-                                    <td colspan="3" class="px-3 py-2">
+                                    <td colspan="3" class="px-3 py-2 overflow-hidden">
                                         <div class="flex items-center justify-between gap-2">
 
                                             <!-- Avatar + Nome + Palpite -->
@@ -195,7 +212,28 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-3 sm:p-6 text-gray-900">
                     <div>
-                        <table class="w-full divide-y divide-gray-200">
+                        <style>
+                            .col-posicao {
+                                width: 50px;
+                            }
+                            .col-pontos {
+                                width: 70px;
+                            }
+                            @media (min-width: 768px) {
+                                .col-posicao {
+                                    width: 120px;
+                                }
+                                .col-pontos {
+                                    width: 180px;
+                                }
+                            }
+                        </style>
+                        <table style="table-layout:fixed;width:100%;" class="divide-y divide-gray-200">
+                            <colgroup>
+                                <col class="col-posicao">
+                                <col>
+                                <col class="col-pontos">
+                            </colgroup>
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th colspan=3 scope="col" class="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider text-center">
@@ -203,13 +241,13 @@
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th scope="col" class="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-1 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('#') }}
                                     </th>
                                     <th scope="col" class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('Nome') }}
                                     </th>
-                                    <th scope="col" class="px-2 py-3 text-left text-xs text-center font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" class="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         {{ __('Pontos') }}
                                     </th>
                                 </tr>
@@ -239,21 +277,21 @@
                                     'hover:bg-gray-100' => $user->id !== auth()->id() && $posicao > 3,
                                 ])>
                                     <td @class([
-                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center w-8',
+                                        'px-1 py-2 whitespace-nowrap text-sm text-center',
                                         'font-bold text-gray-950' => $user->id === auth()->id(),
                                         'font-medium text-gray-900' => $user->id !== auth()->id()
                                     ])>
                                         {{ $posicao }}º
                                     </td>
-                                    <td class="px-2 py-2 text-sm text-gray-500 w-full">
-                                        <div class="flex items-center gap-3 min-w-0 truncate">
+                                    <td style="max-width:0;overflow:hidden;" class="px-2 py-2 w-full">
+                                        <div class="flex items-center gap-2" style="min-width:0;">
                                             <img class="w-8 h-8 md:w-10 md:h-10 rounded-full shadow-md bg-white flex-shrink-0"
                                                 src="{{ $user->avatar }}"
                                                 onerror="this.onerror=null;this.src='/img/no-avatar.png';"
                                                 title="{{ $user->name }}"
                                                 alt="{{ $user->name }}">
 
-                                            <span @class([
+                                            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;" @class([
                                                 'text-sm md:text-base',
                                                 'text-gray-950 font-bold' => $user->id === auth()->id(),
                                                 'text-gray-800' => $user->id !== auth()->id()
@@ -261,9 +299,9 @@
                                                 {{ $user->name }}
                                             </span>
                                             @if(is_null($user->data_pagamento))
-                                            <span title="Pagamento pendente" class="inline-flex items-center" alt="Pagamento pendente">⚠️</span>
+                                            <span title="Pagamento pendente" class="inline-flex items-center flex-shrink-0" alt="Pagamento pendente">⚠️</span>
                                             @else
-                                            <span title="Pagamento confirmado" class="inline-flex items-center text-green-500" alt="Pagamento confirmado">
+                                            <span title="Pagamento confirmado" class="inline-flex items-center flex-shrink-0 text-green-500" alt="Pagamento confirmado">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                                                 </svg>
@@ -272,7 +310,7 @@
                                         </div>
                                     </td>
                                     <td @class([
-                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center w-12',
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center',
                                         'font-bold text-gray-950' => $user->id === auth()->id(),
                                         'font-medium text-gray-700' => $user->id !== auth()->id()
                                     ])>
