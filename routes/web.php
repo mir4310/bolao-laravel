@@ -62,6 +62,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::resource('admin/users', AdminUserController::class)->names('admin.users');
     Route::post('/admin/users/sync-avatars', [AdminUserController::class, 'syncAvatars'])->name('admin.users.sync-avatars');
+    Route::post('/admin/users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
 
     // Outras rotas de admin aqui...
 });

@@ -97,6 +97,18 @@ class AdminUserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Usuário atualizado com sucesso!');
     }
 
+    public function resetPassword(User $user)
+    {
+        // Gera senha aleatória de 8 caracteres contendo letras e números
+        $newPassword = \Illuminate\Support\Str::random(8);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        return redirect()->back()->with('success_password', $newPassword);
+    }
+
     public function destroy(User $user)
     {
         $user->delete();
