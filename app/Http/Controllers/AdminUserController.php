@@ -99,6 +99,11 @@ class AdminUserController extends Controller
 
     public function resetPassword(User $user)
     {
+        // Defesa em profundidade: garante que o usuário logado executando a ação é Administrador
+        if (!auth()->user() || !auth()->user()->isAdmin()) {
+            abort(403, 'Acesso não autorizado.');
+        }
+
         // Gera senha aleatória de 8 caracteres contendo letras e números
         $newPassword = \Illuminate\Support\Str::random(8);
 
