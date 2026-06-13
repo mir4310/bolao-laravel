@@ -27,48 +27,53 @@
                                 <tr>
                                     <th colspan="3" class="px-3 sm:px-6 py-4 text-center font-thin">
 
-                                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-
-                                            <!-- Bandeira Casa -->
-                                            <img src="{{ $partida->homeTeamBandeira }}"
-                                                class="h-6 w-9 object-cover shadow-sm"
-                                                alt="{{ $partida->homeTeam }}"
-                                                title="{{ $partida->homeTeam }}"
-                                                onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg';" />
-
-                                            <!-- Placar -->
-                                            <div class="flex flex-col sm:flex-row items-center gap-2 text-center">
-
-                                                <span class="font-medium text-gray-800 text-base sm:text-lg">
+                                        <div class="flex flex-row items-center justify-between gap-4 max-w-lg mx-auto">
+                                            
+                                            <!-- Mandante -->
+                                            <div class="flex flex-col items-center flex-1 min-w-[72px]">
+                                                <img src="{{ $partida->homeTeamBandeira }}"
+                                                    class="h-6 w-9 object-cover mb-1 shadow-sm"
+                                                    alt="{{ $partida->homeTeam }}"
+                                                    title="{{ $partida->homeTeam }}"
+                                                    onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg';" />
+                                                <span class="text-sm font-medium text-gray-800 leading-tight truncate max-w-[100px] sm:max-w-none">
                                                     {{ $partida->homeTeam }}
                                                 </span>
-
-                                                <div class="flex items-center gap-1 font-bold text-lg sm:text-xl text-gray-900 bg-gray-100 px-3 py-1 rounded-lg">
-                                                    @if($partida->status >= 1)
-                                                        <span>{{ $partida->homeGoals ?? 0 }}</span>
-                                                    @endif
-                                                    <span class="text-gray-400">x</span>
-                                                    @if($partida->status >= 1)
-                                                        <span>{{ $partida->awayGoals ?? 0 }}</span>
-                                                    @endif
-                                                </div>
-
-                                                <span class="font-medium text-gray-800 text-base sm:text-lg">
-                                                    {{ $partida->awayTeam }}
-                                                </span>
-
                                             </div>
 
-                                            <!-- Bandeira Fora -->
-                                            <img src="{{ $partida->awayTeamBandeira }}"
-                                                class="h-6 w-9 object-cover shadow-sm"
-                                                alt="{{ $partida->awayTeam }}"
-                                                title="{{ $partida->awayTeam }}"
-                                                onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg';" />
+                                            <!-- Placar -->
+                                            <div class="flex flex-col items-center justify-center shrink-0">
+                                                <div class="flex items-center gap-2 font-bold text-lg text-gray-900 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                                                    @if($partida->status >= 1)
+                                                        <span>{{ $partida->homeGoals ?? 0 }}</span>
+                                                    @else
+                                                        <span class="text-gray-400 font-medium">-</span>
+                                                    @endif
+                                                    <span class="text-gray-400 text-xs">x</span>
+                                                    @if($partida->status >= 1)
+                                                        <span>{{ $partida->awayGoals ?? 0 }}</span>
+                                                    @else
+                                                        <span class="text-gray-400 font-medium">-</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Visitante -->
+                                            <div class="flex flex-col items-center flex-1 min-w-[72px]">
+                                                <img src="{{ $partida->awayTeamBandeira }}"
+                                                    class="h-6 w-9 object-cover mb-1 shadow-sm"
+                                                    alt="{{ $partida->awayTeam }}"
+                                                    title="{{ $partida->awayTeam }}"
+                                                    onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/b/b0/No_flag.svg';" />
+                                                <span class="text-sm font-medium text-gray-800 leading-tight truncate max-w-[100px] sm:max-w-none">
+                                                    {{ $partida->awayTeam }}
+                                                </span>
+                                            </div>
+
                                         </div>
 
-                                        <div class="mt-2 text-xs sm:text-sm italic text-gray-500">
-                                            {{$partida->date}} - {{$partida->hour }}
+                                        <div class="mt-3 text-xs sm:text-sm italic text-gray-500">
+                                            {{ $partida->date }} - {{ $partida->hour }}
                                         </div>
 
                                     </th>
@@ -92,46 +97,47 @@
                             <tbody class="bg-white divide-y divide-gray-200">
 
                                 @forelse($partida->palpites as $palpites)
+                                 <!-- 📱 MOBILE (Card) -->
+                                 <tr @class([
+                                     'sm:hidden',
+                                     'bg-zinc-200' => $palpites->user_id === auth()->id()
+                                 ])>
+                                     <td colspan="3" class="px-3 py-3">
+                                         <div class="flex flex-row items-center justify-between gap-2">
+                                             
+                                             <!-- Avatar e Nome -->
+                                             <div class="flex items-center gap-2 min-w-0 flex-1">
+                                                 <img class="w-8 h-8 rounded-full shadow-sm bg-white shrink-0" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                                 <span @class([
+                                                     'text-sm font-semibold text-gray-800 truncate',
+                                                     'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                 ])>
+                                                     {{ $palpites->user->name }}
+                                                 </span>
+                                             </div>
 
-                                <!-- 📱 MOBILE (Card) -->
-                                <tr @class([
-                                    'sm:hidden',
-                                    'bg-zinc-200' => $palpites->user_id === auth()->id()
-                                ])>
-                                    <td colspan="3" class="px-4 py-4">
-                                        <div class="flex flex-col gap-2">
+                                             <!-- Palpite -->
+                                             <div @class([
+                                                 'text-center shrink-0 px-2 text-sm text-gray-600',
+                                                 'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
+                                             ])>
+                                                 @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
+                                                     <span class="italic text-gray-400">Sem palpite</span>
+                                                 @else
+                                                     {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
+                                                 @endif
+                                             </div>
 
-                                            <span @class([
-                                                'text-base break-words',
-                                                'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
-                                                'font-semibold text-gray-600' => $palpites->user_id !== auth()->id()
-                                            ])>
-                                                <div class="flex items-center justify-start gap-3">
-                                                    <img class="w-10 h-10 rounded-full shadow-md bg-white" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
-                                                    <span>{{ $palpites->user->name }}</span>
-                                                </div>
-                                            </span>
+                                             <!-- Pontos -->
+                                             <div class="shrink-0">
+                                                 <span class="inline-flex items-center justify-center min-w-[44px] text-center px-2 py-0.5 text-sm font-bold rounded-full bg-green-100 text-green-800 border border-green-300">
+                                                     {{ $palpites->pontos }} pts
+                                                 </span>
+                                             </div>
 
-                                            <div class="flex items-center justify-between mt-1">
-                                                <span @class([
-                                                    'text-base',
-                                                    'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
-                                                    'text-gray-600' => $palpites->user_id !== auth()->id()
-                                                ])>
-                                                    <span class="font-medium text-sm text-gray-400">Palpite:</span>
-                                                    @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                                        <span class="italic text-gray-400">Não palpitou</span>
-                                                    @else
-                                                        {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
-                                                    @endif
-                                                </span>
-                                                <span class="inline-flex items-center justify-center min-w-[50px] text-center px-2.5 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 border border-green-300">
-                                                    {{ $palpites->pontos }} pts
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                         </div>
+                                     </td>
+                                 </tr>
 
                                 <!-- 💻 DESKTOP (Tabela Normal) -->
                                 <tr @class([
