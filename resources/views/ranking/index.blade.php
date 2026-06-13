@@ -96,8 +96,9 @@
                                             <div class="flex items-center gap-2 min-w-0 flex-1">
                                                 <img class="w-8 h-8 rounded-full shadow-sm bg-white shrink-0" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                                 <span @class([
-                                                    'text-sm font-semibold text-gray-800 truncate',
+                                                    'text-sm truncate',
                                                     'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                    'font-normal text-gray-800' => $palpites->user_id !== auth()->id(),
                                                 ])>
                                                     {{ $palpites->user->name }}
                                                 </span>
@@ -109,7 +110,7 @@
                                                 'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
                                             ])>
                                                 @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                                    <span class="italic text-gray-400">Sem palpite</span>
+                                                    <span title="Sem palpite">😢</span>
                                                 @else
                                                     {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                                 @endif
@@ -149,7 +150,7 @@
                                         'font-medium text-gray-600' => $palpites->user_id !== auth()->id()
                                     ])>
                                         @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                        Não palpitou
+                                        😢
                                         @else
                                         {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                         @endif
@@ -187,9 +188,9 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                <div class="p-3 sm:p-6 text-gray-900">
+                    <div>
+                        <table class="w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th colspan=3 scope="col" class="px-6 py-3 text-left text-lg font-medium text-gray-500 uppercase tracking-wider text-center">
@@ -233,13 +234,13 @@
                                     'hover:bg-gray-100' => $user->id !== auth()->id() && $posicao > 3,
                                 ])>
                                     <td @class([
-                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center min-w-[5ch] sm:min-w-[10ch] lg:min-w-[15ch]',
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center w-8',
                                         'font-bold text-gray-950' => $user->id === auth()->id(),
                                         'font-medium text-gray-900' => $user->id !== auth()->id()
                                     ])>
                                         {{ $posicao }}º
                                     </td>
-                                    <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-500 w-full max-w-[1px]">
+                                    <td class="px-2 py-2 text-sm text-gray-500 w-full">
                                         <div class="flex items-center gap-3 min-w-0 truncate">
                                             <img class="w-8 h-8 md:w-10 md:h-10 rounded-full shadow-md bg-white flex-shrink-0"
                                                 src="{{ $user->avatar }}"
@@ -266,7 +267,7 @@
                                         </div>
                                     </td>
                                     <td @class([
-                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center min-w-[5ch] sm:min-w-[15ch] lg:min-w-[30ch]',
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center w-12',
                                         'font-bold text-gray-950' => $user->id === auth()->id(),
                                         'font-medium text-gray-700' => $user->id !== auth()->id()
                                     ])>

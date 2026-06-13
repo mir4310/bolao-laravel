@@ -19,7 +19,7 @@
                         </a>
                     </div>
 
-                    <div class="overflow-x-auto">
+                    <div>
                         <table class="w-full divide-y divide-gray-200 text-sm">
 
                             <!-- HEADER -->
@@ -109,8 +109,9 @@
                                              <div class="flex items-center gap-2 min-w-0 flex-1">
                                                  <img class="w-8 h-8 rounded-full shadow-sm bg-white shrink-0" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
                                                  <span @class([
-                                                     'text-sm font-semibold text-gray-800 truncate',
+                                                     'text-sm truncate',
                                                      'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                     'font-normal text-gray-800' => $palpites->user_id !== auth()->id(),
                                                  ])>
                                                      {{ $palpites->user->name }}
                                                  </span>
@@ -122,7 +123,7 @@
                                                  'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
                                              ])>
                                                  @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                                     <span class="italic text-gray-400">Sem palpite</span>
+                                                     <span title="Sem palpite">😢</span>
                                                  @else
                                                      {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                                  @endif
@@ -162,7 +163,7 @@
                                         'font-medium text-gray-600' => $palpites->user_id !== auth()->id()
                                     ])>
                                         @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                            <span class="italic text-gray-400">Não palpitou</span>
+                                            <span title="Não palpitou">😢</span>
                                         @else
                                             {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
                                         @endif
