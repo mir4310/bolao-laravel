@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Apostas da Partida: ') }} {{ $partida->homeTeam }} x {{ $partida->awayTeam }}
+            {{ __('Apostas da Partida') }}
         </h2>
     </x-slot>
 
@@ -102,42 +102,47 @@
                                      'sm:hidden',
                                      'bg-zinc-200' => $palpites->user_id === auth()->id()
                                  ])>
-                                     <td colspan="3" class="px-3 py-3">
-                                         <div class="flex flex-row items-center justify-between gap-2">
-                                             
-                                             <!-- Avatar e Nome -->
-                                             <div class="flex items-center gap-2 min-w-0 flex-1">
-                                                 <img class="w-8 h-8 rounded-full shadow-sm bg-white shrink-0" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
-                                                 <span @class([
-                                                     'text-sm truncate',
+                                 <td colspan="3" class="px-3 py-2">
+                                     <div class="flex items-center justify-between gap-2">
+
+                                         <!-- Avatar + Nome + Palpite -->
+                                         <div class="flex items-center gap-2 min-w-0 flex-1">
+                                             <img class="w-9 h-9 rounded-full shadow-sm bg-white shrink-0" src="{{ $palpites->user->avatar }}" onerror="this.onerror=null;this.src='/img/no-avatar.png';" title="{{ $palpites->user->name }}" alt="{{ $palpites->user->name }}">
+                                             <div class="min-w-0 flex-1">
+                                                 <div @class([
+                                                     'text-sm truncate leading-tight',
                                                      'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
                                                      'font-normal text-gray-800' => $palpites->user_id !== auth()->id(),
                                                  ])>
                                                      {{ $palpites->user->name }}
-                                                 </span>
+                                                 </div>
+                                                 <div @class([
+                                                     'text-xs mt-0.5',
+                                                     'font-bold text-gray-700' => $palpites->user_id === auth()->id(),
+                                                     'text-gray-500' => $palpites->user_id !== auth()->id(),
+                                                 ])>
+                                                     @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
+                                                         😢
+                                                     @else
+                                                         {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
+                                                     @endif
+                                                 </div>
                                              </div>
-
-                                             <!-- Palpite -->
-                                             <div @class([
-                                                 'text-center shrink-0 px-2 text-sm text-gray-600',
-                                                 'text-gray-950 font-bold' => $palpites->user_id === auth()->id(),
-                                             ])>
-                                                 @if($palpites->home_team_goals === null || $palpites->away_team_goals === null)
-                                                     <span title="Sem palpite">😢</span>
-                                                 @else
-                                                     {{ $palpites->home_team_goals }} x {{ $palpites->away_team_goals }}
-                                                 @endif
-                                             </div>
-
-                                             <!-- Pontos -->
-                                             <div class="shrink-0">
-                                                 <span class="inline-flex items-center justify-center min-w-[44px] text-center px-2 py-0.5 text-sm font-bold rounded-full bg-green-100 text-green-800 border border-green-300">
-                                                     {{ $palpites->pontos }} pts
-                                                 </span>
-                                             </div>
-
                                          </div>
-                                     </td>
+
+                                         <!-- Pontos -->
+                                         <div class="shrink-0 text-right">
+                                             <div @class([
+                                                 'text-sm',
+                                                 'font-bold text-gray-950' => $palpites->user_id === auth()->id(),
+                                                 'font-medium text-gray-600' => $palpites->user_id !== auth()->id(),
+                                             ])>
+                                                 {{ $palpites->pontos }} pts
+                                             </div>
+                                         </div>
+
+                                     </div>
+                                 </td>
                                  </tr>
 
                                 <!-- 💻 DESKTOP (Tabela Normal) -->
