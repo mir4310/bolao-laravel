@@ -216,15 +216,13 @@
                                 @endif
 
 
-                                <tr @class([
-                                    'bg-green-100' => $posicao == 1,
-                                    'bg-sky-100' => $posicao == 2,
-                                    'bg-yellow-100' => $posicao == 3,
-                                    'hover:bg-green-200' => $posicao == 1,
-                                    'hover:bg-sky-200' => $posicao == 2,
-                                    'hover:bg-yellow-200' => $posicao == 3,
-                                    'bg-zinc-200' => $user->id === auth()->id() && $posicao > 3,
-                                    'hover:bg-zinc-300' => $user->id === auth()->id() && $posicao > 3,
+                                <tr onclick="window.location='{{ route('ranking.user-palpites', $user->id) }}'" @class([
+                                    'cursor-pointer transition-colors',
+                                    'bg-green-100 hover:bg-green-200' => $posicao == 1,
+                                    'bg-sky-100 hover:bg-sky-200' => $posicao == 2,
+                                    'bg-yellow-100 hover:bg-yellow-200' => $posicao == 3,
+                                    'bg-zinc-200 hover:bg-zinc-300' => $user->id === auth()->id() && $posicao > 3,
+                                    'hover:bg-gray-100' => $user->id !== auth()->id() && $posicao > 3,
                                 ])>
                                     <td @class([
                                         'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center min-w-[5ch] sm:min-w-[10ch] lg:min-w-[15ch]',

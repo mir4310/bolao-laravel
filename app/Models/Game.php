@@ -44,4 +44,12 @@ class Game extends Model
     {
         return $this->hasOne(Palpite::class)->where('user_id', Auth::id());
     }
+
+    /**
+     * Retorna todos os palpites deste jogo.
+     */
+    public function palpites()
+    {
+        return $this->hasMany(Palpite::class);
+    }
 }

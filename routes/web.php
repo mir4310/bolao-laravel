@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/ranking', [RankingController::class, 'index'])->name('ranking.index');
+    Route::get('/ranking/user/{id}', [RankingController::class, 'userPalpites'])->name('ranking.user-palpites');
     Route::get('/regulamento', [SiteController::class, 'regulamento'])->name('regulamento');
 });
 

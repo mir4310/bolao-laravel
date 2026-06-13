@@ -47,4 +47,23 @@ class RankingController extends Controller
 
         return view('ranking.index', compact('ranking', 'partidasEmAndamento'));
     }
+
+    /**
+     * Exibe os palpites de um usuário específico para partidas bloqueadas (status 1 ou 2).
+     */
+    public function userPalpites($id)
+    {
+        $user = User::withSum('palpites', 'pontos')->findOrFail($id);
+
+        // Busca todos os jogos em andamento (1) ou finalizados (2) e carrega o palpite do usuário
+        $games = Game::with(['homeTeam', 'awayTeam', 'palpites' => function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        }])
+        ->whereIn('status', [1, 2])
+        ->orderBy('date')
+        ->orderBy('hour')
+        ->get();
+
+        return view('ranking.user-palpites', compact('user', 'games'));
+    }
 }
