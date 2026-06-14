@@ -55,6 +55,7 @@ class AdminGameController extends Controller
             'fase' => 'required|string|max:255',
             'pontos' => 'required|string|max:255',
             'status' => 'required|integer',
+            'api_id' => 'nullable|string|max:50',
         ]);
 
         // Define valores padrão para campos opcionais na criação
@@ -85,55 +86,13 @@ class AdminGameController extends Controller
             'hour' => 'required',
             'city' => 'required|string|max:255',
             'fase' => 'required|integer|max:255',
-            'pontos' => 'required|integer|max:255'
+            'pontos' => 'required|integer|max:255',
+            'api_id' => 'nullable|string|max:50',
         ]);
 
         $game->update($data);
 
-        // Rotina para ajustar os pontos de todos os palpites da referida partida
-        // Checa se o jogo já foi iniciado. Só recalcula se o jogo estiver iniciado
-        if ($game->status >= 1) {
-            $objPalpites = Palpite::where('game_id', $game->id)->get();
-
-            foreach ($objPalpites as $palpite) {
-                $totalPontos = 0;
-
-                $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
-                //echo ("Home Team Gol : {$game->home_team_goals}<br>");
-                //echo ("Away Team Gol : {$game->away_team_goals}<br>");
-                //echo ("Palpite Home  : {$palpite->home_team_goals}<br>");
-                //echo ("Palpite Away  : {$palpite->away_team_goals}<br>");
-
-                $nTotGolsPartida = $game->home_team_goals + $game->away_team_goals;
-                $nTotGolsPalpite = $palpite->home_team_goals + $palpite->away_team_goals;
-                if (!$erroPalpite) {
-                    if ($palpite->home_team_goals == $game->home_team_goals && $palpite->away_team_goals == $game->away_team_goals) {
-                        //Placar Exato
-                        $totalPontos = 6;
-                    } else {
-                        //Acertou Empate ou o vencedor
-                        if ($palpite->home_team_goals == $palpite->away_team_goals && $game->home_team_goals == $game->away_team_goals) {
-                            $totalPontos = 3;
-                        } else {
-                            if ($palpite->home_team_goals > $palpite->away_team_goals && $game->home_team_goals > $game->away_team_goals) {
-                                $totalPontos = 3;
-                            } else
-                            if ($palpite->home_team_goals < $palpite->away_team_goals && $game->home_team_goals < $game->away_team_goals) {
-                                $totalPontos = 3;
-                            }
-                        }
-                        //Atribui pontos de bonificação
-                        if ($nTotGolsPalpite == $nTotGolsPartida) {
-                            $totalPontos = $totalPontos + 1;
-                        } elseif ($palpite->home_team_goals == $game->home_team_goals || $palpite->away_team_goals == $game->away_team_goals) {
-                            $totalPontos = $totalPontos + 1;
-                        }
-                    }
-                }
-                $palpite->pontos = $totalPontos;
-                $palpite->save();
-            }
-        }
+        $game->recalculatePalpitesPoints();
         //return redirect()->route('admin.games.index')->with('success', 'Jogo atualizado com sucesso!');
         return redirect()->route('admin.games.edit', $game->id)->with('success', 'Jogo atualizado com sucesso!');
     }

@@ -13,3 +13,9 @@ Schedule::command('games:lock-starting')
     ->everyFifteenMinutes()
     ->withoutOverlapping()
     ->runInBackground();
+
+// Busca e atualiza os resultados das partidas em andamento via API — roda a cada minuto
+Schedule::command('app:fetch-game-results')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->runInBackground();

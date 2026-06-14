@@ -76,7 +76,14 @@
                             <div>
                                 <x-input-label for="pontos" :value="__('Multiplicador de Pontos')" />
                                 <x-text-input id="pontos" name="pontos" type="text" class="mt-1 block w-full" :value="old('pontos', '1')" required />
-                                <x-input-error class="mt-2" :messages="$errors->get('fase')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('pontos')" />
+                            </div>
+
+                            <!-- ID Integração -->
+                            <div>
+                                <x-input-label for="api_id" :value="__('ID Integração')" />
+                                <x-text-input id="api_id" name="api_id" type="text" maxlength="50" class="mt-1 block w-full" :value="old('api_id')" />
+                                <x-input-error class="mt-2" :messages="$errors->get('api_id')" />
                             </div>
                         </div>
 

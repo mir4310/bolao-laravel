@@ -95,6 +95,13 @@
                                     <option value="2" {{ $game->status == 2 ? 'selected' : '' }}>Finalizado</option>
                                 </select>
                             </div>
+
+                            <!-- ID Integração -->
+                            <div>
+                                <x-input-label for="api_id" :value="__('ID Integração')" />
+                                <x-text-input id="api_id" name="api_id" type="text" maxlength="50" class="mt-1 block w-full" :value="old('api_id', $game->api_id)" />
+                                <x-input-error class="mt-2" :messages="$errors->get('api_id')" />
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
