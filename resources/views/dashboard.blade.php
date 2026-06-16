@@ -66,29 +66,42 @@
                         $grupos = $games->pluck('group')->filter()->unique()->sort()->values();
                     @endphp
 
-                    {{-- Botões: Filtros + Chute de Ouro --}}
-                    <div class="mb-4 flex flex-wrap items-center gap-3">
-                        <button type="button" id="filters-toggle"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300
-                                   bg-white text-gray-700 font-semibold text-sm shadow-sm
-                                   hover:bg-gray-50 hover:border-gray-400 transition-all duration-200
-                                   focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                            <svg id="filters-chevron" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
-                            </svg>
-                            Filtros
-                            <span id="active-filters-badge"
-                                class="hidden ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-indigo-600 text-white leading-none">
-                                0
-                            </span>
-                        </button>
+                    {{-- Botões: Filtros + Ocultar Encerrados + Chute de Ouro --}}
+                    {{-- Mobile: linha 1 = Filtros + Ocultar (metade cada); linha 2 = Chute de Ouro (largura toda) --}}
+                    {{-- Desktop: tudo em uma linha --}}
+                    <div class="mb-4 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3">
 
-                        {{-- Botão Chute de Ouro --}}
+                        {{-- Linha 1 no mobile: Filtros + Ocultar encerrados --}}
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <button type="button" id="filters-toggle"
+                                class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-gray-300
+                                       bg-white text-gray-700 font-semibold text-sm shadow-sm
+                                       hover:bg-gray-50 hover:border-gray-400 transition-all duration-200
+                                       focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                                <svg id="filters-chevron" class="w-4 h-4 text-gray-500 transition-transform duration-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/>
+                                </svg>
+                                Filtros
+                                <span id="active-filters-badge"
+                                    class="hidden ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-indigo-600 text-white leading-none">
+                                    0
+                                </span>
+                            </button>
+
+                            <!-- Toggle Ocultar/Exibir Finalizados -->
+                            <label class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-gray-300 shadow-sm text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-all duration-200">
+                                <input type="checkbox" id="hide-finished-checkbox" class="sr-only peer" checked>
+                                <div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                <span class="select-none text-gray-600">Ocultar encerrados</span>
+                            </label>
+                        </div>
+
+                        {{-- Linha 2 no mobile: Chute de Ouro (largura toda) --}}
                         <button type="button" id="chute-ouro-toggle"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-yellow-400
+                            class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-yellow-400
                                    bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-semibold text-sm shadow-sm
                                    hover:from-yellow-500 hover:to-amber-600 transition-all duration-200
                                    focus:outline-none focus:ring-2 focus:ring-yellow-400">
@@ -322,7 +335,7 @@
                             $erroPalpite = ($palpite->home_team_goals ?? null) === null || ($palpite->away_team_goals ?? null) === null;
 
                             @endphp
-                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" style="padding: 10px; @if($game->status == 0) padding-bottom: 22px; @endif" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])>
+                            <div data-game-id="{{ $game->id }}" data-group="{{ $game->group }}" data-fase="{{ $game->fase }}" data-date="{{ $game->date }}" data-status="{{ $game->status }}" style="padding: 10px; @if($game->status == 0) padding-bottom: 22px; @endif" @class(['relative border rounded-lg p-3 md:p-4 shadow-sm hover:shadow-md transition-shadow;','bg-gray-100'=> $isLocked, 'bg-red-50' => !$isLocked && $erroPalpite, 'bg-green-50' => !$isLocked && !$erroPalpite])>
 
                                 <span class="absolute top-2 left-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border
                                     @if($game->status == 0)
@@ -460,6 +473,10 @@
                                 Nenhum jogo disponível para apostas no momento.
                             </div>
                             @endforelse
+
+                            <div id="no-games-found-message" class="col-span-1 lg:col-span-2 text-center text-gray-500 py-8 hidden">
+                                Nenhuma partida encontrada para os filtros selecionados.
+                            </div>
                         </div>
 
                         <div class="fixed bottom-3 left-1/2 -translate-x-1/2 w-full max-w-[90rem] px-4 md:px-6 lg:px-8 pointer-events-none z-50 flex justify-end">
@@ -792,6 +809,14 @@
             const groupLabel    = document.getElementById('group-filter-label');
             const groupLabelTxt = document.getElementById('group-filter-label-text');
             const groupClearBtn = document.getElementById('group-filter-clear');
+            const hideFinishedCheckbox = document.getElementById('hide-finished-checkbox');
+            if (hideFinishedCheckbox) {
+                const savedHideFinished = localStorage.getItem('hide_finished_games');
+                if (savedHideFinished !== null) {
+                    hideFinishedCheckbox.checked = savedHideFinished === 'true';
+                }
+            }
+            const noGamesMessage = document.getElementById('no-games-found-message');
 
             // Verifica se uma data de jogo (YYYY-MM-DD) passa no filtro de data ativo
             function matchesDateFilter(cardDate) {
@@ -826,12 +851,29 @@
 
             // Aplica visibilidade dos cards com base em TODOS os filtros
             function renderCards() {
+                const hideFinished = hideFinishedCheckbox ? hideFinishedCheckbox.checked : false;
+                let visibleCount = 0;
+
                 cards.forEach(card => {
                     const matchFase  = state.fase  === 'all' || card.dataset.fase  === state.fase;
                     const matchGroup = state.group === 'all' || card.dataset.group === state.group;
                     const matchDate  = matchesDateFilter(card.dataset.date);
-                    card.style.display = (matchFase && matchGroup && matchDate) ? '' : 'none';
+                    const matchStatus = !(hideFinished && card.dataset.status === '2');
+
+                    const isVisible = matchFase && matchGroup && matchDate && matchStatus;
+                    card.style.display = isVisible ? '' : 'none';
+                    if (isVisible) {
+                        visibleCount++;
+                    }
                 });
+
+                if (noGamesMessage) {
+                    if (visibleCount === 0) {
+                        noGamesMessage.classList.remove('hidden');
+                    } else {
+                        noGamesMessage.classList.add('hidden');
+                    }
+                }
             }
 
             // Estilo ativo/inativo para botões de DATA (âmbar)
@@ -928,6 +970,17 @@
                     updateBadge();
                 });
             });
+
+            // Ao alternar visibilidade de encerrados
+            if (hideFinishedCheckbox) {
+                hideFinishedCheckbox.addEventListener('change', () => {
+                    localStorage.setItem('hide_finished_games', hideFinishedCheckbox.checked);
+                    renderCards();
+                });
+            }
+
+            // Executa no load da página para aplicar o filtro inicial (ocultar finalizados por padrão)
+            renderCards();
         })();
         // ===== FIM FILTROS =====
     </script>
