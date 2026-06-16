@@ -74,7 +74,7 @@
                         {{-- Linha 1 no mobile: Filtros + Ocultar encerrados --}}
                         <div class="flex items-center gap-3 w-full md:w-auto">
                             <button type="button" id="filters-toggle"
-                                class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-gray-300
+                                class="flex-none inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-gray-300
                                        bg-white text-gray-700 font-semibold text-sm shadow-sm
                                        hover:bg-gray-50 hover:border-gray-400 transition-all duration-200
                                        focus:outline-none focus:ring-2 focus:ring-indigo-400">
@@ -92,10 +92,10 @@
                             </button>
 
                             <!-- Toggle Ocultar/Exibir Finalizados -->
-                            <label class="flex-1 md:flex-none inline-flex items-center justify-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-gray-300 shadow-sm text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-all duration-200">
+                            <label class="flex-1 min-w-0 overflow-hidden inline-flex items-center justify-center gap-2 cursor-pointer bg-white px-4 py-2 rounded-lg border border-gray-300 shadow-sm text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-all duration-200">
                                 <input type="checkbox" id="hide-finished-checkbox" class="sr-only peer" checked>
-                                <div class="relative w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                                <span class="select-none text-gray-600">Ocultar encerrados</span>
+                                <div class="relative w-9 h-5 flex-shrink-0 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                <span class="select-none text-gray-600 truncate">Ocultar encerrados</span>
                             </label>
                         </div>
 
