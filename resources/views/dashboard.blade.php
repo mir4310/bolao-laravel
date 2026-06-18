@@ -502,16 +502,6 @@
                     </form>
                 </div>
             </div>
-
-            @if(auth()->user()->isAdmin() && file_exists(base_path('.compile')))
-                @php
-                    $compileNumber = trim(file_get_contents(base_path('.compile')));
-                @endphp
-                <div class="mt-4 text-center text-xs text-gray-400">
-                    Compilação: {{ $compileNumber }}
-                </div>
-            @endif
-
         </div>
     </div>
 
