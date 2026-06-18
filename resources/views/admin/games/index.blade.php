@@ -49,7 +49,7 @@
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Placar</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visitante</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Email Enviado</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">ID Integração</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -87,12 +87,8 @@
                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Finalizado</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-center">
-                                        @if($game->email_sent)
-                                        <span class="text-green-600 font-bold">Sim</span>
-                                        @else
-                                        <span class="text-gray-400">Não</span>
-                                        @endif
+                                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-mono text-gray-600">
+                                        {{ $game->api_id ?: '—' }}
                                     </td>
                                 </tr>
                                 @empty
