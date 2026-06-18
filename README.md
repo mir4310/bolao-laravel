@@ -65,7 +65,7 @@ O sistema é desenvolvido utilizando o framework **Laravel**, garantindo robuste
   * **Contribuição:** Responsável pela configuração do ambiente de implantação (deploy), pipelines de CI/CD e gerenciamento dos servidores/infraestrutura na nuvem.
 
 * **[@luizprimati](https://br.linkedin.com/in/luizprimati)**
-  * **Papel:** ntegration Specialist
+  * **Papel:** Integration Specialist
   * **Contribuição:** Responsável pela arquitetura e desenvolvimento da integração de dados e comunicação com os placares em tempo real (APIs).
 
 
