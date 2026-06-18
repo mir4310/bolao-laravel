@@ -53,6 +53,22 @@ O sistema é desenvolvido utilizando o framework **Laravel**, garantindo robuste
    php artisan serve
    ```
 
+
+## 👥 Equipe e Contribuições
+
+* **[@mir4310](https://github.com/mir4310)**
+  * **Papel:** UI/UX Designer & Lead Developer
+  * **Contribuição:** Responsável pelo design visual da interface (arquitetura/desenho) e pelo desenvolvimento de toda a lógica e programação principal do projeto.
+
+* **[@arthurbentivenha](https://github.com/arthurbentivenha)**
+  * **Papel:** DevOps - Infraestrutura
+  * **Contribuição:** Responsável pela configuração do ambiente de implantação (deploy), pipelines de CI/CD e gerenciamento dos servidores/infraestrutura na nuvem.
+
+* **[@luizprimati](https://br.linkedin.com/in/luizprimati)**
+  * **Papel:** ntegration Specialist
+  * **Contribuição:** Responsável pela arquitetura e desenvolvimento da integração de dados e comunicação com os placares em tempo real (APIs).
+
+
 ## 📝 Licença
 
 Este projeto está sob a licença MIT.
