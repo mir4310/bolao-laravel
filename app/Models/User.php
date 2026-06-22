@@ -26,7 +26,8 @@ class User extends Authenticatable
         'role',
         'data_pagamento',
         'valor',
-        'avatar'
+        'avatar',
+        'ativo',
     ];
 
     /**
@@ -48,8 +49,9 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'data_pagamento' => 'datetime',
-            'password' => 'hashed',
+            'data_pagamento'    => 'datetime',
+            'password'          => 'hashed',
+            'ativo'             => 'boolean',
         ];
     }
 

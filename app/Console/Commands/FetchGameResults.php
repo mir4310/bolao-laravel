@@ -82,10 +82,6 @@ class FetchGameResults extends Command
                 $homeScore = isset($data['home_score']) ? (int) $data['home_score'] : 0;
                 $awayScore = isset($data['away_score']) ? (int) $data['away_score'] : 0;
 
-                // Só atualiza se o valor da API for >= ao valor já cadastrado (protege contra regressão de placar)
-                $homeScore = max($homeScore, (int) $game->home_team_goals);
-                $awayScore = max($awayScore, (int) $game->away_team_goals);
-
                 $game->home_team_goals = $homeScore;
                 $game->away_team_goals = $awayScore;
                 $this->info("Placar atualizado (Supabase): {$game->homeTeam->name} {$homeScore} x {$awayScore} {$game->awayTeam->name}");
@@ -132,10 +128,6 @@ class FetchGameResults extends Command
                     $awayScore = isset($apiGame['away_score']) ? (int) $apiGame['away_score'] : null;
 
                     if ($homeScore !== null && $awayScore !== null) {
-                        // Só atualiza se o valor da API for >= ao valor já cadastrado (protege contra regressão de placar)
-                        $homeScore = max($homeScore, (int) $game->home_team_goals);
-                        $awayScore = max($awayScore, (int) $game->away_team_goals);
-
                         $game->home_team_goals = $homeScore;
                         $game->away_team_goals = $awayScore;
                         $this->info("Placar atualizado (worldcup26): {$game->homeTeam->name} {$homeScore} x {$awayScore} {$game->awayTeam->name}");

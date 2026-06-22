@@ -80,7 +80,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @foreach($users as $user)
-                                <tr onclick="window.location='{{ route('admin.users.edit', $user->id) }}'" class="hover:bg-gray-50 cursor-pointer transition">
+                                <tr onclick="window.location='{{ route('admin.users.edit', $user->id) }}'" class="hover:bg-gray-50 cursor-pointer transition {{ !$user->ativo ? 'opacity-50' : '' }}">
                                     <td class="flex items-center px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         <img class="w-8 h-8 mr-2 md:w-10 md:h-10 rounded-full shadow-md bg-white flex-shrink-0"
                                             src="{{ $user->avatar }}"
@@ -94,6 +94,11 @@
                                                 @if($user->role === 'administrador')
                                                 <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 border border-indigo-200">
                                                     Admin
+                                                </span>
+                                                @endif
+                                                @if(!$user->ativo)
+                                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-200">
+                                                    Inativo
                                                 </span>
                                                 @endif
                                             </span>

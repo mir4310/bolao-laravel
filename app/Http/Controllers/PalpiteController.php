@@ -92,8 +92,8 @@ class PalpiteController extends Controller
             abort(403, 'As apostas para esta partida ainda não estão disponíveis para visualização.');
         }
 
-        // Busca todos os usuários
-        $users = \App\Models\User::orderBy('name')->get();
+        // Busca apenas usuários ativos
+        $users = \App\Models\User::where('ativo', true)->orderBy('name')->get();
 
         // Busca os palpites existentes para este jogo
         $palpitesExistentes = Palpite::where('game_id', $game->id)
@@ -105,11 +105,11 @@ class PalpiteController extends Controller
             $palpite = $palpitesExistentes->get($user->id);
             if (!$palpite) {
                 $palpite = new Palpite([
-                    'user_id' => $user->id,
-                    'game_id' => null,
+                    'user_id'        => $user->id,
+                    'game_id'        => null,
                     'home_team_goals' => null,
                     'away_team_goals' => null,
-                    'pontos' => 0,
+                    'pontos'         => 0,
                 ]);
             }
             $palpite->setRelation('user', $user);

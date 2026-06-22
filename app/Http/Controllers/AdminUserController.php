@@ -73,19 +73,19 @@ class AdminUserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password'       => ['nullable', 'confirmed', Rules\Password::defaults()],
             'data_pagamento' => ['nullable', 'date'],
-            'role' => ['nullable', 'string', 'in:administrador,usuario'],
+            'role'           => ['nullable', 'string', 'in:administrador,usuario'],
         ]);
 
         $data = [
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'           => $request->name,
+            'email'          => $request->email,
             'data_pagamento' => $request->data_pagamento,
-            // checkbox: envia 'administrador' se marcado, null se desmarcado
-            'role' => $request->input('role') === 'administrador' ? 'administrador' : 'usuario',
+            'role'           => $request->input('role') === 'administrador' ? 'administrador' : 'usuario',
+            'ativo'          => $request->boolean('ativo'),
         ];
 
         if ($request->filled('password')) {

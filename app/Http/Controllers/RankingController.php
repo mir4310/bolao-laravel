@@ -14,8 +14,9 @@ class RankingController extends Controller
      */
     public function index()
     {
-        // Busca todos os usuários com a soma de seus pontos nos palpites
-        $ranking = User::withSum('palpites', 'pontos')
+        // Busca apenas usuários ativos com a soma de seus pontos nos palpites
+        $ranking = User::where('ativo', true)
+            ->withSum('palpites', 'pontos')
             ->orderByDesc('palpites_sum_pontos')
             ->orderBy('name')
             ->get();
@@ -24,7 +25,9 @@ class RankingController extends Controller
         $gamesEmAndamento = Game::with(['homeTeam', 'awayTeam'])->where('status', 1)->get();
         $partidasEmAndamento = [];
         foreach ($gamesEmAndamento as $game) {
-            $palpites = Palpite::with(['user'])->where('game_id', $game->id)->orderByDesc('pontos')->get();
+            $palpites = Palpite::with(['user'])->where('game_id', $game->id)
+                ->whereHas('user', fn($q) => $q->where('ativo', true))
+                ->orderByDesc('pontos')->get();
 
             $gameDateTime = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $game->date . ' ' . $game->hour, 'America/Sao_Paulo');
             $isFuture = $gameDateTime->isFuture();
@@ -53,7 +56,8 @@ class RankingController extends Controller
      */
     public function userPalpites($id)
     {
-        $user = User::withSum('palpites', 'pontos')->findOrFail($id);
+        // Impede acesso à página de palpites de usuários inativos
+        $user = User::where('ativo', true)->withSum('palpites', 'pontos')->findOrFail($id);
 
         // Busca todos os jogos em andamento (1) ou finalizados (2) e carrega o palpite do usuário
         $games = Game::with(['homeTeam', 'awayTeam', 'palpites' => function ($query) use ($user) {
