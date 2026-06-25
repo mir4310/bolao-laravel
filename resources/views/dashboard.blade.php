@@ -367,8 +367,19 @@
                                 </span>
 
                                 <div class="text-center text-sm text-gray-500 mb-2 pt-6 md:pt-4" style="padding-top: 0.5rem">
-                                    <span class="font-bold block text-gray-700 text-base">
-                                        Fase: {{ ucfirst(str_replace('_', ' ', $game->fase)) }} - Grupo: {{ $game->group }}
+                                     <span class="font-bold block text-gray-700 text-base">
+                                        @php
+                                            $faseLabel = match((int)$game->fase) {
+                                                1 => 'Fase de Grupos - Grupo ' . $game->group,
+                                                2 => 'Segunda Fase - 1/16 de Final',
+                                                3 => 'Oitavas de Final',
+                                                4 => 'Quartas de Final',
+                                                5 => 'Semifinal',
+                                                6 => ((int)$game->group === 1 ? 'Final' : 'Disputa de Terceiro e Quarto'),
+                                                default => 'Fase ' . $game->fase . ' - Grupo ' . $game->group,
+                                            };
+                                        @endphp
+                                        {{ $faseLabel }}
                                     </span>
                                     {{ $gameDateTime->format('d/m/Y H:i') }}
                                 </div>
