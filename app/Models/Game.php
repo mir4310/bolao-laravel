@@ -60,6 +60,7 @@ class Game extends Model
     public function recalculatePalpitesPoints()
     {
         if ($this->status >= 1) {
+            $peso = ($this->pontos !== null && $this->pontos > 0) ? (float) $this->pontos : 1;
             $objPalpites = $this->palpites;
 
             foreach ($objPalpites as $palpite) {
@@ -93,7 +94,7 @@ class Game extends Model
                         }
                     }
                 }
-                $palpite->pontos = $totalPontos;
+                $palpite->pontos = $totalPontos * $peso;
                 $palpite->save();
             }
         }
