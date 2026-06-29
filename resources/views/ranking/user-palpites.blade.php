@@ -20,8 +20,12 @@
                         </a>
                     </div>
 
+                    @php
+                        $totalComChute = ($user->palpites_sum_pontos ?? 0) + ($chuteDeOuro?->total_pontos ?? 0);
+                    @endphp
+
                     {{-- Cabeçalho do Apostador --}}
-                    <div class="flex flex-col sm:flex-row items-center gap-4 p-4 md:p-6 mb-8 rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
+                    <div class="flex flex-col sm:flex-row items-center gap-4 p-4 md:p-6 mb-4 rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
                         <img class="w-16 h-16 md:w-20 md:h-20 rounded-full shadow-md bg-white border-2 border-indigo-100 flex-shrink-0"
                             src="{{ $user->avatar }}"
                             onerror="this.onerror=null;this.src='/img/no-avatar.png';"
@@ -32,9 +36,40 @@
                         </div>
                         <div class="bg-indigo-600 text-white font-extrabold px-6 py-3 rounded-xl shadow-md text-center shrink-0">
                             <span class="block text-xs uppercase tracking-wider font-semibold opacity-80">Pontuação Total</span>
-                            <span class="text-2xl md:text-3xl">{{ $user->palpites_sum_pontos ?? 0 }} pts</span>
+                            <span class="text-2xl md:text-3xl">{{ $totalComChute }} pts</span>
                         </div>
                     </div>
+
+                    {{-- Bloco do Chute de Ouro --}}
+                    @if($chuteDeOuro)
+                    <div class="mb-8 rounded-xl border border-amber-200 bg-amber-50/50 p-4 md:p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">⭐</span>
+                            <h4 class="text-base font-bold text-amber-800 uppercase tracking-wide">Chute de Ouro</h4>
+                        </div>
+                        
+                        <div class="flex items-center justify-center gap-4 md:gap-8 flex-wrap">
+                            @foreach([['team01','🏆','Campeã'],['team02','🥈','Vice'],['team03','⚽','Artilheiro']] as [$rel, $emoji, $label])
+                            @php $t = $chuteDeOuro->$rel; @endphp
+                            <div class="flex flex-col items-center gap-1 min-w-[70px]">
+                                <span class="text-[10px] text-amber-700/80 font-bold uppercase tracking-wider">{{ $emoji }} {{ $label }}</span>
+                                @if($t)
+                                    <img src="{{ $t->bandeira }}" class="h-6 w-9 object-cover shadow-sm rounded border border-amber-200/50" alt="{{ $t->name }}" onerror="this.style.display='none'">
+                                    <span class="text-xs text-gray-800 font-bold text-center leading-tight truncate w-full max-w-[80px]">{{ $t->name }}</span>
+                                @else
+                                    <span class="text-sm text-gray-400 italic">—</span>
+                                @endif
+                            </div>
+                            @endforeach
+                        </div>
+                        
+                        <div class="bg-amber-100 text-amber-900 font-bold px-4 py-2 rounded-lg text-center shrink-0 border border-amber-300">
+                            <span class="block text-[10px] uppercase tracking-wider opacity-80">Pontos</span>
+                            <span class="text-lg">{{ $chuteDeOuro->total_pontos ?? 0 }}</span>
+                        </div>
+                    </div>
+                    @endif
+
 
                     {{-- Título da Seção --}}
                     <div class="mb-4">

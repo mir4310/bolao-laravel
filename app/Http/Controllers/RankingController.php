@@ -21,6 +21,19 @@ class RankingController extends Controller
             ->orderBy('name')
             ->get();
 
+        // O Chute de Ouro só pode ser exibido se as apostas estiverem bloqueadas (Fase 3 iniciada)
+        $chuteDeOuroBloqueado = \App\Models\Game::where('fase', 3)->where('status', '>=', 1)->exists();
+
+        // Chutes de Ouro de todos os usuários ativos, indexados por user_id para lookup rápido
+        // Só busca os dados se estiver bloqueado para economizar memória
+        $chutesDeOuro = collect();
+        if ($chuteDeOuroBloqueado) {
+            $chutesDeOuro = \App\Models\ChuteDeOuro::with(['team01', 'team02', 'team03'])
+                ->whereHas('user', fn($q) => $q->where('ativo', true))
+                ->get()
+                ->keyBy('user_id');
+        }
+
         // Pega as partidas em andamento para montar o vetor de classificação 
         $gamesEmAndamento = Game::with(['homeTeam', 'awayTeam'])->where('status', 1)->get();
         $partidasEmAndamento = [];
@@ -48,7 +61,7 @@ class RankingController extends Controller
             ];
         }
 
-        return view('ranking.index', compact('ranking', 'partidasEmAndamento'));
+        return view('ranking.index', compact('ranking', 'partidasEmAndamento', 'chutesDeOuro', 'chuteDeOuroBloqueado'));
     }
 
     /**
@@ -68,6 +81,17 @@ class RankingController extends Controller
         ->orderBy('hour')
         ->get();
 
-        return view('ranking.user-palpites', compact('user', 'games'));
+        // O Chute de Ouro só pode ser exibido se as apostas estiverem bloqueadas (Fase 3 iniciada)
+        $chuteDeOuroBloqueado = \App\Models\Game::where('fase', 3)->where('status', '>=', 1)->exists();
+
+        // Busca o Chute de Ouro do usuário apenas se já estiver bloqueado
+        $chuteDeOuro = null;
+        if ($chuteDeOuroBloqueado) {
+            $chuteDeOuro = \App\Models\ChuteDeOuro::with(['team01', 'team02', 'team03'])
+                ->where('user_id', $user->id)
+                ->first();
+        }
+
+        return view('ranking.user-palpites', compact('user', 'games', 'chuteDeOuro', 'chuteDeOuroBloqueado'));
     }
 }

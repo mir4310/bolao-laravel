@@ -14,6 +14,16 @@ class ChuteDeOuroController extends Controller
      */
     public function store(Request $request)
     {
+        // Bloqueia quando qualquer partida da fase 3 (Oitavas) já iniciou
+        $bloqueado = \App\Models\Game::where('fase', 3)->where('status', '>=', 1)->exists();
+
+        if ($bloqueado) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'As apostas do Chute de Ouro estão encerradas.'], 403);
+            }
+            return back()->withErrors(['chute' => 'As apostas do Chute de Ouro estão encerradas.']);
+        }
+
         $data = $request->validate([
             'chute01' => 'nullable|exists:teams,id',
             'chute02' => 'nullable|exists:teams,id',

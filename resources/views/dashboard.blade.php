@@ -64,6 +64,10 @@
                         ];
                         $fases  = $games->pluck('fase')->filter()->unique()->sort()->values();
                         $grupos = $games->pluck('group')->filter()->unique()->sort()->values();
+
+                        $chuteDeOuroBloqueado = $games->contains(
+                            fn($g) => (int)$g->fase === 3 && $g->status >= 1
+                        );
                     @endphp
 
                     {{-- Botões: Filtros + Ocultar Encerrados + Chute de Ouro --}}
@@ -224,6 +228,76 @@
                             <form id="chute-ouro-form" action="{{ route('chute-de-ouro.store') }}" method="POST">
                                 @csrf
 
+                                @php
+                                    // Resolve o objeto Team a partir do ID salvo no chute
+                                    $teamsById = $teams->keyBy('id');
+                                    $teamChute01 = $chuteDeOuro?->chute01 ? $teamsById->get($chuteDeOuro->chute01) : null;
+                                    $teamChute02 = $chuteDeOuro?->chute02 ? $teamsById->get($chuteDeOuro->chute02) : null;
+                                    $teamChute03 = $chuteDeOuro?->chute03 ? $teamsById->get($chuteDeOuro->chute03) : null;
+                                @endphp
+
+                                @if($chuteDeOuroBloqueado)
+                                {{-- ===== MODO BLOQUEADO: só exibe o resultado ===== --}}
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                                    {{-- Chute 01: Campeã --}}
+                                    <div class="flex flex-col gap-2">
+                                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">🏆 Seleção Campeã</span>
+                                        @if($teamChute01)
+                                            <div class="flex items-center gap-3 p-3 rounded-lg bg-white border border-yellow-200 shadow-sm">
+                                                <img src="{{ $teamChute01->bandeira }}" class="h-8 w-12 object-cover rounded shadow-sm" alt="{{ $teamChute01->name }}" onerror="this.style.display='none'">
+                                                <span class="text-sm font-bold text-gray-800">{{ $teamChute01->name }}</span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-2 p-3 rounded-lg bg-gray-100 border border-gray-200 text-gray-400 text-sm italic">
+                                                😢 Você não palpitou!
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    {{-- Chute 02: Vice-campeã --}}
+                                    <div class="flex flex-col gap-2">
+                                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">🥈 Seleção Vice-campeã</span>
+                                        @if($teamChute02)
+                                            <div class="flex items-center gap-3 p-3 rounded-lg bg-white border border-yellow-200 shadow-sm">
+                                                <img src="{{ $teamChute02->bandeira }}" class="h-8 w-12 object-cover rounded shadow-sm" alt="{{ $teamChute02->name }}" onerror="this.style.display='none'">
+                                                <span class="text-sm font-bold text-gray-800">{{ $teamChute02->name }}</span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-2 p-3 rounded-lg bg-gray-100 border border-gray-200 text-gray-400 text-sm italic">
+                                                😢 Você não palpitou!
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    {{-- Chute 03: Artilheiro --}}
+                                    <div class="flex flex-col gap-2">
+                                        <span class="text-xs font-bold text-amber-800 uppercase tracking-wide">⚽ Artilheiro da Copa</span>
+                                        @if($teamChute03)
+                                            <div class="flex items-center gap-3 p-3 rounded-lg bg-white border border-yellow-200 shadow-sm">
+                                                <img src="{{ $teamChute03->bandeira }}" class="h-8 w-12 object-cover rounded shadow-sm" alt="{{ $teamChute03->name }}" onerror="this.style.display='none'">
+                                                <span class="text-sm font-bold text-gray-800">{{ $teamChute03->name }}</span>
+                                            </div>
+                                        @else
+                                            <div class="flex items-center gap-2 p-3 rounded-lg bg-gray-100 border border-gray-200 text-gray-400 text-sm italic">
+                                                😢 Você não palpitou!
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                </div>
+
+                                <div class="mt-4 flex justify-end">
+                                    <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm text-white bg-gray-400 cursor-not-allowed select-none">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                        </svg>
+                                        Apostas encerradas — Oitavas iniciadas
+                                    </span>
+                                </div>
+
+                                @else
+                                {{-- ===== MODO ABERTO: combos normais ===== --}}
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
 
                                     {{-- Chute 01: Campeã --}}
@@ -248,7 +322,6 @@
                                                 <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                             </div>
                                         </div>
-                                        {{-- Bandeira do selecionado --}}
                                         <div id="flag-chute01" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
                                     </div>
 
@@ -274,7 +347,6 @@
                                                 <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                             </div>
                                         </div>
-                                        {{-- Bandeira do selecionado --}}
                                         <div id="flag-chute02" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
                                     </div>
 
@@ -300,7 +372,6 @@
                                                 <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                                             </div>
                                         </div>
-                                        {{-- Bandeira do selecionado --}}
                                         <div id="flag-chute03" class="mt-1 flex items-center gap-2 min-h-[28px]"></div>
                                     </div>
 
@@ -316,6 +387,8 @@
                                         Salvar Chute de Ouro
                                     </button>
                                 </div>
+
+                                @endif
 
                             </form>
 
@@ -733,7 +806,10 @@
         (function () {
             const form   = document.getElementById('chute-ouro-form');
             const btn    = document.getElementById('chute-ouro-submit');
-            if (!form || !btn) return;
+            if (!form) return;
+
+            // Se não há botão (já está bloqueado pelo servidor), não registra o listener
+            if (!btn) return;
 
             form.addEventListener('submit', function (e) {
                 e.preventDefault();
@@ -753,21 +829,44 @@
                 .then(({ status, body }) => {
                     if (status === 200 && body.success) {
                         showToast(body.success, 'success');
+                    } else if (status === 403 && body.error) {
+                        // Bloqueio ativado enquanto a tela estava aberta:
+                        // exibe aviso e troca o botão pelo badge de encerrado
+                        showToast(body.error, 'error', 5000);
+
+                        // Desabilita todos os selects do Chute de Ouro
+                        ['chute01', 'chute02', 'chute03'].forEach(id => {
+                            const sel = document.getElementById(id);
+                            if (sel) { sel.disabled = true; sel.classList.add('opacity-60', 'cursor-not-allowed'); }
+                        });
+
+                        // Substitui o botão pelo badge de encerrado
+                        const wrapper = btn.parentElement;
+                        wrapper.innerHTML = `
+                            <span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-sm text-white bg-gray-400 cursor-not-allowed select-none">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                Apostas encerradas — Oitavas iniciadas
+                            </span>`;
+                        return; // evita o finally reabilitar o botão
                     } else {
                         const msg = body.errors
                             ? Object.values(body.errors)[0][0]
-                            : (body.message || 'Erro ao salvar.');
+                            : (body.message || body.error || 'Erro ao salvar.');
                         showToast(msg, 'error');
                     }
                 })
                 .catch(() => showToast('Falha ao salvar. Verifique sua conexão.', 'error'))
                 .finally(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = original;
+                    // Só reabilita se o botão ainda existir no DOM (não foi trocado pelo badge)
+                    if (document.getElementById('chute-ouro-submit')) {
+                        btn.disabled = false;
+                        btn.innerHTML = original;
+                    }
                 });
             });
         })();
-        // ===== FIM AJAX CHUTE DE OURO =====
 
         // ===== FILTROS: FASE + GRUPO =====
         (function () {

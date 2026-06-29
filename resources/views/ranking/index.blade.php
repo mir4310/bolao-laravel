@@ -214,17 +214,17 @@
                     <div>
                         <style>
                             .col-posicao {
-                                width: 50px;
+                                width: 70px;
                             }
                             .col-pontos {
                                 width: 70px;
                             }
                             @media (min-width: 768px) {
                                 .col-posicao {
-                                    width: 120px;
+                                    width: 150px;
                                 }
                                 .col-pontos {
-                                    width: 180px;
+                                    width: 150px;
                                 }
                             }
                         </style>
@@ -267,23 +267,29 @@
                                 @endphp
                                 @endif
 
+                                @php
+                                    $chute = $chutesDeOuro->get($user->id);
+                                    $totalComChute = ($user->palpites_sum_pontos ?? 0) + ($chute?->total_pontos ?? 0);
+                                    $isMe = $user->id === auth()->id();
+                                @endphp
 
                                 <tr onclick="window.location='{{ route('ranking.user-palpites', $user->id) }}'" @class([
                                     'cursor-pointer transition-colors',
                                     'bg-green-100 hover:bg-green-200' => $posicao == 1,
                                     'bg-sky-100 hover:bg-sky-200' => $posicao == 2,
                                     'bg-yellow-100 hover:bg-yellow-200' => $posicao == 3,
-                                    'bg-zinc-200 hover:bg-zinc-300' => $user->id === auth()->id() && $posicao > 3,
-                                    'hover:bg-gray-100' => $user->id !== auth()->id() && $posicao > 3,
+                                    'bg-zinc-200 hover:bg-zinc-300' => $isMe && $posicao > 3,
+                                    'hover:bg-gray-100' => !$isMe && $posicao > 3,
                                 ])>
                                     <td @class([
-                                        'px-1 py-2 whitespace-nowrap text-sm text-center',
-                                        'font-bold text-gray-950' => $user->id === auth()->id(),
-                                        'font-medium text-gray-900' => $user->id !== auth()->id()
+                                        'px-1 py-2 whitespace-nowrap text-sm text-center align-top pt-3',
+                                        'font-bold text-gray-950' => $isMe,
+                                        'font-medium text-gray-900' => !$isMe
                                     ])>
                                         {{ $posicao }}º
                                     </td>
                                     <td style="max-width:0;overflow:hidden;" class="px-2 py-2 w-full">
+                                        {{-- Nome + avatar --}}
                                         <div class="flex items-center gap-2" style="min-width:0;">
                                             <img class="w-8 h-8 md:w-10 md:h-10 rounded-full shadow-md bg-white flex-shrink-0"
                                                 src="{{ $user->avatar }}"
@@ -293,8 +299,8 @@
 
                                             <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;" @class([
                                                 'text-sm md:text-base',
-                                                'text-gray-950 font-bold' => $user->id === auth()->id(),
-                                                'text-gray-800' => $user->id !== auth()->id()
+                                                'text-gray-950 font-bold' => $isMe,
+                                                'text-gray-800' => !$isMe
                                             ])>
                                                 {{ $user->name }}
                                             </span>
@@ -308,15 +314,62 @@
                                             </span>
                                             @endif
                                         </div>
+
+                                        {{-- Chute de Ouro — visível apenas em tablet/desktop (md+) --}}
+                                        @if($chute)
+                                        <div class="hidden md:flex w-full justify-center items-center gap-10 mt-2 pt-2">
+                                            @foreach([['team01','🏆','Campeã'],['team02','🥈','Vice'],['team03','⚽','Artilheiro']] as [$rel, $emoji, $label])
+                                            @php $t = $chute->$rel; @endphp
+                                            <div class="flex flex-col items-center gap-0.5 min-w-[60px]">
+                                                <span class="text-xs text-gray-400 font-medium">{{ $emoji }}</span>
+                                                @if($t)
+                                                    <img src="{{ $t->bandeira }}" class="h-6 w-9 object-cover shadow-sm rounded-sm" alt="{{ $t->name }}" onerror="this.style.display='none'">
+                                                    <span class="text-xs text-gray-500 text-center leading-tight">{{ $t->name }}</span>
+                                                @else
+                                                    <span class="text-sm text-gray-300">—</span>
+                                                @endif
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                        @endif
                                     </td>
                                     <td @class([
-                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center',
-                                        'font-bold text-gray-950' => $user->id === auth()->id(),
-                                        'font-medium text-gray-700' => $user->id !== auth()->id()
+                                        'px-2 py-2 whitespace-nowrap text-sm md:text-base text-center align-top pt-3',
+                                        'font-bold text-gray-950' => $isMe,
+                                        'font-medium text-gray-700' => !$isMe
                                     ])>
-                                        {{ $user->palpites_sum_pontos ?? 0 }}
+                                        {{ $totalComChute }}
                                     </td>
                                 </tr>
+
+                                {{-- Linha mobile: Chute de Ouro (tablet/celular — abaixo do md) --}}
+                                @if($chute)
+                                <tr @class([
+                                    'md:hidden cursor-pointer',
+                                    'bg-green-100' => $posicao == 1,
+                                    'bg-sky-100' => $posicao == 2,
+                                    'bg-yellow-100' => $posicao == 3,
+                                    'bg-zinc-200' => $isMe && $posicao > 3,
+                                ]) onclick="window.location='{{ route('ranking.user-palpites', $user->id) }}'">
+                                    <td colspan="3" class="pb-2 pt-0">
+                                        <div class="flex items-center justify-center gap-2 pt-2 w-full px-2">
+                                            @foreach([['team01','🏆'],['team02','🥈'],['team03','⚽']] as [$rel, $emoji])
+                                            @php $t = $chute->$rel; @endphp
+                                            <div class="flex items-center gap-1 flex-1 min-w-0">
+                                                <span class="text-xs text-gray-400 shrink-0">{{ $emoji }}</span>
+                                                @if($t)
+                                                    <img src="{{ $t->bandeira }}" class="h-4 w-6 object-cover shadow-sm shrink-0" alt="{{ $t->name }}" onerror="this.style.display='none'">
+                                                    <span class="text-xs text-gray-600 truncate min-w-0">{{ $t->name }}</span>
+                                                @else
+                                                    <span class="text-xs text-gray-400 italic shrink-0">—</span>
+                                                @endif
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endif
+
                                 @empty
                                 <tr>
                                     <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
@@ -356,6 +409,7 @@
             </div>
         </div>
     </div>
+
     @if(count($partidasEmAndamento) > 0)
     @php
         $hasActiveGame = collect($partidasEmAndamento)->contains(fn($p) => !$p->isFuture);
