@@ -39,6 +39,7 @@
                             <x-slot name="content">
                                 <x-dropdown-link :href="route('admin.games.index')">{{ __('Lista de Jogos') }}</x-dropdown-link>
                                 <x-dropdown-link :href="route('admin.users.index')">{{ __('Usuários') }}</x-dropdown-link>
+                                <x-dropdown-link :href="route('admin.settings.index')">{{ __('Configurações') }}</x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -130,6 +131,7 @@
             <!-- Substitua '#' pela rota correta quando criada, ex: route('admin.games.index') -->
             <x-responsive-nav-link :href="route('admin.games.index')" :active="request()->routeIs('admin.games.index')">{{ __('Lista de Jogos') }}</x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">{{ __('Usuários') }}</x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.settings.index')" :active="request()->routeIs('admin.settings.index')">{{ __('Configurações') }}</x-responsive-nav-link>
             @endif
         </div>
 

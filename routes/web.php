@@ -3,6 +3,7 @@
 use App\Http\Controllers\ChuteDeOuroController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminGameController;
+use App\Http\Controllers\AdminSettingController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\PalpiteController;
@@ -64,7 +65,10 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/users/sync-avatars', [AdminUserController::class, 'syncAvatars'])->name('admin.users.sync-avatars');
     Route::post('/admin/users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset-password');
 
-    // Outras rotas de admin aqui...
+    // Configurações Globais (Chute de Ouro)
+    Route::get('/admin/settings', [AdminSettingController::class, 'index'])->name('admin.settings.index');
+    Route::post('/admin/settings', [AdminSettingController::class, 'store'])->name('admin.settings.store');
+    Route::post('/admin/settings/process', [AdminSettingController::class, 'processarChute'])->name('admin.settings.process');
 });
 
 require __DIR__ . '/auth.php';

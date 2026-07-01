@@ -52,6 +52,23 @@
                     </div>
                     @endif
 
+                    @if($errors->any())
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                        <ul class="list-disc list-inside">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    @if($chuteDeOuro && $chuteDeOuro->chute01 && $chuteDeOuro->chute01 == $chuteDeOuro->chute02)
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 shadow-sm" role="alert">
+                        <strong class="font-bold">Atenção!</strong>
+                        <span class="block sm:inline">No seu palpite do <b>Chute de Ouro</b>, a seleção Campeã está igual à Vice-campeã. Modifique o palpite para garantir seus pontos!</span>
+                    </div>
+                    @endif
+
                     {{-- ===== FILTROS ===== --}}
                     @php
                         $faseNomes = [

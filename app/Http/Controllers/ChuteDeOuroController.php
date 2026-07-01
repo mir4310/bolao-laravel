@@ -26,8 +26,10 @@ class ChuteDeOuroController extends Controller
 
         $data = $request->validate([
             'chute01' => 'nullable|exists:teams,id',
-            'chute02' => 'nullable|exists:teams,id',
+            'chute02' => 'nullable|exists:teams,id|different:chute01',
             'chute03' => 'nullable|exists:teams,id',
+        ], [
+            'chute02.different' => 'A seleção vice-campeã não pode ser a mesma que a campeã.'
         ]);
 
         ChuteDeOuro::updateOrCreate(
